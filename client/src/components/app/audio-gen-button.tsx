@@ -12,7 +12,7 @@ interface AudioGenerationButtonProps {
 
 type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'error';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3100';
 
 export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioGenerationButtonProps) {
     const [state, setState] = useState<AudioState>('idle');

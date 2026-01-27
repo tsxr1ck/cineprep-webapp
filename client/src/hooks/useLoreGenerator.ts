@@ -56,16 +56,7 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
                 return;
             }
 
-            // Verificar si existe mock data (para desarrollo)
-            const mockAnalysis = getLoreAnalysis(movieId);
-            if (mockAnalysis) {
-                console.log('✅ Usando mock data de desarrollo');
-                await simulateProgress();
-                setAnalysis(mockAnalysis);
-                setFromCache(true);
-                setLoading(false);
-                return;
-            }
+
 
             // ============================================
             // STAGE 2: Obtener datos de TMDB
