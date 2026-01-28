@@ -1,9 +1,10 @@
 // src/hooks/useLoreGenerator.ts
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { TMDBService } from '@/services/TMDB-service';
 import { QwenService } from '@/services/qwenService';
-import { getLoreAnalysis } from '@/components/app/mockData';
+import type { LoreGenerationResponse } from '@/services/qwenService';
+import { useAuth } from '@/contexts/useAuth';
 import type { UseLoreGeneratorReturn } from '@/types/hooks';
 import type { LoreAnalysis } from '@/types/lore';
 import type { LoadingStage } from '@/types/components';
@@ -20,6 +21,9 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
     const [error, setError] = useState<string | null>(null);
     const [fromCache, setFromCache] = useState<boolean>(false);
 
+    // Get auth context for session and membership
+    const { session, canGenerateAnalysis, refreshUsage, getAnalysisLimitStatus } = useAuth();
+
     /**
      * Etapas de carga con mensajes descriptivos
      */
@@ -33,7 +37,7 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
     /**
      * Función principal: Genera el análisis de lore
      */
-    const generateLore = async (): Promise<void> => {
+    const generateLore = useCallback(async (): Promise<void> => {
         setLoading(true);
         setError(null);
         setStage(0);
@@ -41,22 +45,35 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
 
         try {
             // ============================================
+            // STAGE 0: Check authentication and credits
+            // ============================================
+            if (!session?.access_token) {
+                throw new Error('Debes iniciar sesión para generar análisis.');
+            }
+
+            // Check if user can generate (client-side check)
+            if (!canGenerateAnalysis()) {
+                const limitStatus = getAnalysisLimitStatus();
+                throw new Error(
+                    `Has alcanzado el límite de ${limitStatus.limit} análisis este mes. Actualiza tu plan para continuar.`
+                );
+            }
+
+            // ============================================
             // STAGE 1: Verificar cache local
             // ============================================
             setStage(1);
             await sleep(600);
 
-            const cached = getCachedAnalysis(movieId);
-            if (cached) {
-                console.log('✅ Usando análisis del cache local');
-                await simulateProgress();
-                setAnalysis(cached);
-                setFromCache(true);
-                setLoading(false);
-                return;
-            }
-
-
+            // const cached = getCachedAnalysis(movieId);
+            // if (cached) {
+            //     console.log('✅ Usando análisis del cache local');
+            //     await simulateProgress();
+            //     setAnalysis(cached);
+            //     setFromCache(true);
+            //     setLoading(false);
+            //     return;
+            // }
 
             // ============================================
             // STAGE 2: Obtener datos de TMDB
@@ -109,23 +126,26 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
             );
 
             // ============================================
-            // STAGE 3: Generar con Qwen AI
+            // STAGE 3: Generar con Qwen AI (con autenticación)
             // ============================================
             setStage(3);
             await sleep(1000); // Dar tiempo para que el usuario vea el mensaje
 
             console.log('🤖 Enviando solicitud a Qwen AI...');
 
-            // USO BÁSICO: Solo pasamos currentMovie y previousMovies
-            const aiAnalysis = await QwenService.generateLoreAnalysis(
+            // Pass the access token for authentication
+            const aiAnalysis: LoreGenerationResponse = await QwenService.generateLoreAnalysis(
                 movieDetails,
-                previousMovies
+                previousMovies,
+                session.access_token
             );
 
             console.log('✅ Análisis generado exitosamente:', {
                 status: aiAnalysis.status,
                 movies_analyzed: aiAnalysis.required_movies.length,
-                preparation_time: aiAnalysis.preparation_time
+                preparation_time: aiAnalysis.preparation_time,
+                from_cache: aiAnalysis.from_cache,
+                user_analysis_id: aiAnalysis.user_analysis_id
             });
 
             // ============================================
@@ -135,11 +155,15 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
             await sleep(600);
 
             setAnalysis(aiAnalysis);
+            setFromCache(aiAnalysis.from_cache || false);
 
-            // Guardar en cache (válido por 7 días)
+            // Guardar en cache local (válido por 7 días)
             saveCachedAnalysis(movieId, aiAnalysis);
 
             console.log('💾 Análisis guardado en cache local');
+
+            // Refresh usage data to update UI
+            await refreshUsage();
 
         } catch (err) {
             console.error('❌ Error generating lore:', err);
@@ -166,17 +190,33 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
             setLoading(false);
             setStage(0);
         }
-    };
+    }, [movieId, session, canGenerateAnalysis, getAnalysisLimitStatus, refreshUsage]);
+
+    /**
+     * Carga un análisis guardado previamente (desde la base de datos)
+     * Se usa cuando el usuario hace click en "Mostrar Lore"
+     */
+    const loadSavedAnalysis = useCallback((savedAnalysis: LoreAnalysis): void => {
+        console.log('📂 Cargando análisis guardado:', savedAnalysis);
+
+        setAnalysis(savedAnalysis);
+        setLoading(false);
+        setError(null);
+        setStage(stages.length); // Set to final stage
+        setFromCache(true); // Mark as from cache/saved
+
+        console.log('✅ Análisis cargado exitosamente');
+    }, [stages.length]);
 
     /**
      * Limpia el análisis actual
      */
-    const clearAnalysis = (): void => {
+    const clearAnalysis = useCallback((): void => {
         setAnalysis(null);
         setError(null);
         setStage(0);
         setFromCache(false);
-    };
+    }, []);
 
     /**
      * Simula progreso de stages para datos cacheados/mock
@@ -196,6 +236,7 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
         analysis,
         error,
         clearAnalysis,
+        loadSavedAnalysis, // Export the new method
         fromCache
     };
 }

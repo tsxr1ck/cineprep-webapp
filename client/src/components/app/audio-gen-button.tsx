@@ -1,8 +1,9 @@
 // src/components/AudioGenerationButton.tsx
 import React, { useState } from 'react';
-import { Play, Pause, Loader2, Volume2, Download, CheckCircle2 } from 'lucide-react';
+import { Play, Pause, Loader2, Volume2, Download, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/useAuth';
 
 interface AudioGenerationButtonProps {
     narrative: string;
@@ -10,18 +11,34 @@ interface AudioGenerationButtonProps {
     movieId: number;
 }
 
-type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'error';
+type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'error' | 'limit_reached';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3100';
 
 export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioGenerationButtonProps) {
+    const { session, canGenerateAudio, getRemainingAudio, refreshUsage } = useAuth();
+
     const [state, setState] = useState<AudioState>('idle');
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
+    const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
 
     const generateAudio = async () => {
+        // Check credits before attempting
+        if (!canGenerateAudio()) {
+            setState('limit_reached');
+            setError('Has alcanzado el límite de generaciones de audio este mes.');
+            return;
+        }
+
+        if (!session?.access_token) {
+            setState('error');
+            setError('Debes iniciar sesión para generar audio.');
+            return;
+        }
+
         try {
             setState('generating');
             setError(null);
@@ -38,6 +55,7 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     narrative: truncatedNarrative,
@@ -47,18 +65,34 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+
+                // Handle limit reached error
+                if (response.status === 403 && errorData.error === 'Limit Reached') {
+                    setState('limit_reached');
+                    setError(errorData.message || 'Límite de audio alcanzado');
+                    return;
+                }
+
                 throw new Error(errorData.error || 'Error generando audio');
             }
 
             const data = await response.json();
             console.log('📦 Response data:', data);
 
-            // FIXED: Handle the actual response structure from backend
+            // Update credits remaining if provided
+            if (data.credits_remaining !== undefined) {
+                setCreditsRemaining(data.credits_remaining);
+            }
+
+            // Refresh usage in auth context
+            await refreshUsage();
+
+            // Handle the actual response structure from backend
             const audioUrl =
-                data.audio_base64.url ||
-                data.output?.audio?.url ||           // Qwen direct response
-                data.audio_url ||                    // Old backend format
-                data.audio?.url ||                   // Nested format
+                data.audio_base64?.url ||
+                data.output?.audio?.url ||
+                data.audio_url ||
+                data.audio?.url ||
                 null;
 
             console.log('🎵 Extracted audio URL:', audioUrl);
@@ -136,19 +170,29 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
         a.click();
     };
 
+    const remainingCredits = getRemainingAudio();
+
     return (
         <div className="space-y-3">
             {/* Main Button */}
             {state === 'idle' && (
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={generateAudio}
-                    className="text-xs text-[#A0A0AB] hover:text-white border-white/20 hover:border-[#FF6B35]/50 transition-all"
-                >
-                    <Volume2 className="w-3.5 h-3.5 mr-1.5" />
-                    Generar Audio
-                </Button>
+                <div className="space-y-1">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={generateAudio}
+                        disabled={!canGenerateAudio()}
+                        className="text-xs text-[#A0A0AB] hover:text-white border-white/20 hover:border-[#FF6B35]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Volume2 className="w-3.5 h-3.5 mr-1.5" />
+                        Generar Audio
+                    </Button>
+                    {remainingCredits !== -1 && (
+                        <p className="text-xs text-[#6B6B78]">
+                            {remainingCredits} generaciones restantes
+                        </p>
+                    )}
+                </div>
             )}
 
             {/* Generating State */}
@@ -250,6 +294,37 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                             <p className="text-xs text-[#4ECDC4]">Reproduciendo...</p>
                         </div>
                     )}
+
+                    {creditsRemaining !== null && creditsRemaining !== -1 && (
+                        <p className="text-xs text-[#6B6B78] mt-2">
+                            {creditsRemaining} generaciones restantes
+                        </p>
+                    )}
+                </motion.div>
+            )}
+
+            {/* Limit Reached State */}
+            {state === 'limit_reached' && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3"
+                >
+                    <div className="flex items-center gap-2 mb-2">
+                        <AlertCircle className="w-4 h-4 text-amber-400" />
+                        <p className="text-xs font-medium text-amber-400">
+                            Límite Alcanzado
+                        </p>
+                    </div>
+                    <p className="text-xs text-[#A0A0AB] mb-2">{error}</p>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => window.location.href = '/pricing'}
+                        className="text-xs border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                    >
+                        Actualizar Plan
+                    </Button>
                 </motion.div>
             )}
 

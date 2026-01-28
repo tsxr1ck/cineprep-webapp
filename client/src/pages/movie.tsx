@@ -10,16 +10,21 @@ import {
   Play,
   Users,
   ChevronRight,
+  Eye,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TMDBService } from "@/services/TMDB-service";
 import { useLoreGenerator } from "@/hooks/useLoreGenerator";
+import { useHistory } from "@/hooks/useHistory";
 import { LoadingStates } from "@/components/app/loading-states";
 import LoreAnalysis from "@/components/app/lore-analysis";
 import MovieGrid from "@/components/app/movie-grid";
 import type { ExtendedMovieDetails, CollectionAnalysis } from "@/types/tmdb";
 import type { Movie } from "tmdb-ts";
+import supabase from "@/utils/supabase";
 
 export default function MoviePage() {
   const { movieId } = useParams<{ movieId: string }>();
@@ -29,6 +34,7 @@ export default function MoviePage() {
   const [collectionInfo, setCollectionInfo] =
     useState<CollectionAnalysis | null>(null);
   const [showLoreView, setShowLoreView] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const {
     generateLore,
@@ -37,7 +43,10 @@ export default function MoviePage() {
     stages: loadingStages,
     analysis: loreAnalysis,
     clearAnalysis,
+    loadSavedAnalysis,
   } = useLoreGenerator(movie?.id || 0);
+
+  const { hasAnalysis, getAnalysis, isLoading: isLoadingHistory } = useHistory();
 
   useEffect(() => {
     async function fetchMovie() {
@@ -47,6 +56,7 @@ export default function MoviePage() {
       clearAnalysis();
       setCollectionInfo(null);
       setShowLoreView(false);
+      setLoadError(null);
 
       try {
         const details = await TMDBService.getMovieDetails(parseInt(movieId));
@@ -72,7 +82,71 @@ export default function MoviePage() {
   const handleAnalyzeLore = async () => {
     if (!movie || !collectionInfo) return;
     setShowLoreView(true);
+    setLoadError(null);
     await generateLore();
+  };
+
+  const handleShowLore = async () => {
+    if (!movie) return;
+
+    const savedAnalysis = getAnalysis(movie.id);
+    if (!savedAnalysis) {
+      console.error("No saved analysis found for movie:", movie.id);
+      return;
+    }
+
+    console.log("🔍 Loading saved analysis:", savedAnalysis);
+    console.log("📍 Analysis ID:", savedAnalysis.id);
+    console.log("📍 Fetching from:", `/api/analyses/${savedAnalysis.id}`);
+    const { data: { session } } = await supabase.auth.getSession();
+
+    setShowLoreView(true);
+    setLoadError(null);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/lore/${savedAnalysis.id}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          'Authorization': session?.access_token ? `Bearer ${session.access_token}` : '',
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("📡 Response status:", response.status);
+      console.log("📡 Response headers:", Object.fromEntries(response.headers.entries()));
+
+      // Check if response is actually JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("❌ Response is not JSON:", text.substring(0, 200));
+        throw new Error(`Server returned ${contentType || "non-JSON"} response instead of JSON`);
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ API Error:", errorText);
+        throw new Error(`Failed to fetch analysis: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("✅ Received data:", data);
+
+      if (!data.analysis) {
+        console.error("❌ No analysis field in response:", data);
+        throw new Error("Invalid response: missing analysis data");
+      }
+
+      console.log("📂 Loading analysis into state...");
+      loadSavedAnalysis(data.analysis);
+      console.log("✅ Analysis loaded successfully!");
+
+    } catch (error) {
+      console.error("❌ Error fetching saved analysis:", error);
+      setLoadError(error instanceof Error ? error.message : "Error desconocido");
+      setShowLoreView(false);
+    }
   };
 
   const handleMovieClick = (movie: Movie) => {
@@ -120,6 +194,19 @@ export default function MoviePage() {
     day: "numeric",
   });
 
+  // Check if user has already analyzed this movie
+  const movieHasLore = !isLoadingHistory && hasAnalysis(movie.id);
+  const userAnalysis = movieHasLore ? getAnalysis(movie.id) : null;
+
+  // Format the date when lore was generated
+  const loreGeneratedDate = userAnalysis
+    ? new Date(userAnalysis.created_at).toLocaleDateString("es-MX", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+    : null;
+
   return (
     <div className="min-h-screen">
       <AnimatePresence mode="wait">
@@ -130,6 +217,31 @@ export default function MoviePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            {/* Error display */}
+            {loadError && (
+              <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 backdrop-blur-sm"
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-red-500 font-semibold mb-1">Error al cargar lore</p>
+                      <p className="text-red-400 text-sm">{loadError}</p>
+                    </div>
+                    <button
+                      onClick={() => setLoadError(null)}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+
             <div className="relative min-h-[80vh] overflow-hidden">
               {backdropUrl && (
                 <motion.img
@@ -207,6 +319,17 @@ export default function MoviePage() {
                         </Badge>
                       </motion.div>
                     )}
+                    {movieHasLore && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.7 }}
+                      >
+                        <Badge className="bg-[#FF6B35] text-white px-3 py-1">
+                          Lore generado
+                        </Badge>
+                      </motion.div>
+                    )}
                   </div>
 
                   <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-[1.1] drop-shadow-lg">
@@ -247,30 +370,59 @@ export default function MoviePage() {
 
                   <div className="flex flex-wrap gap-4">
                     {collectionInfo?.needs_lore ? (
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button
-                          size="lg"
-                          className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-[#FF6B35]/25 hover:shadow-[#FF6B35]/40 transition-all rounded-2xl"
-                          onClick={handleAnalyzeLore}
-                          disabled={isGeneratingLore}
-                        >
-                          {isGeneratingLore ? (
-                            <>
-                              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                              Generando...
-                            </>
-                          ) : (
-                            <>
-                              <Play className="w-5 h-5 mr-2" />
-                              Preparar Lore
+                      movieHasLore ? (
+                        <div className="flex flex-col gap-3">
+                          <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <Button
+                              size="lg"
+                              className="bg-gradient-to-r from-[#4ECDC4] to-[#44A5E5] text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-[#4ECDC4]/25 hover:shadow-[#4ECDC4]/40 transition-all rounded-2xl"
+                              onClick={handleShowLore}
+                            >
+                              <Eye className="w-5 h-5 mr-2" />
+                              Mostrar Lore
                               <ChevronRight className="w-5 h-5 ml-1" />
-                            </>
+                            </Button>
+                          </motion.div>
+                          {loreGeneratedDate && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="flex items-center gap-2 text-sm text-gray-400"
+                            >
+                              <CheckCircle2 className="w-4 h-4 text-[#4ECDC4]" />
+                              <span>Generado el {loreGeneratedDate}</span>
+                            </motion.div>
                           )}
-                        </Button>
-                      </motion.div>
+                        </div>
+                      ) : (
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Button
+                            size="lg"
+                            className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-[#FF6B35]/25 hover:shadow-[#FF6B35]/40 transition-all rounded-2xl"
+                            onClick={handleAnalyzeLore}
+                            disabled={isGeneratingLore}
+                          >
+                            {isGeneratingLore ? (
+                              <>
+                                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                Generando...
+                              </>
+                            ) : (
+                              <>
+                                <Play className="w-5 h-5 mr-2" />
+                                Preparar Lore
+                                <ChevronRight className="w-5 h-5 ml-1" />
+                              </>
+                            )}
+                          </Button>
+                        </motion.div>
+                      )
                     ) : (
                       <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
                         <Users className="w-5 h-5 text-[#4ECDC4]" />

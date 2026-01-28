@@ -18,7 +18,7 @@ export default function Footer() {
               Preparate para el cine con resumenes inteligentes de las precuelas. Sin spoilers, solo el lore que necesitas.
             </p>
           </div>
-          
+
           <div>
             <h4 className="text-white font-semibold mb-4">Explorar</h4>
             <ul className="space-y-3">
@@ -39,7 +39,7 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="text-white font-semibold mb-4">Legal</h4>
             <ul className="space-y-3">
@@ -56,7 +56,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row items-center justify-between pt-8 border-t border-white/5 gap-4">
           <p className="text-[#6B6B78] text-sm text-center sm:text-left">
             Datos de peliculas proporcionados por{' '}
@@ -68,22 +68,22 @@ export default function Footer() {
             >
               TMDB
             </a>
-            {' '}| 2024 CinePrep
+            {' '}| 2026 CinePrep
           </p>
-          
+
           <div className="flex items-center gap-3">
-            <motion.a 
+            <motion.a
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.9 }}
-              href="#" 
+              href="#"
               className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-[#6B6B78] hover:text-white transition-all"
             >
               <Twitter className="w-4 h-4" />
             </motion.a>
-            <motion.a 
+            <motion.a
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.9 }}
-              href="#" 
+              href="#"
               className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-[#6B6B78] hover:text-white transition-all"
             >
               <Github className="w-4 h-4" />

@@ -10,8 +10,7 @@ dotenv.config();
 import './config/firebase';
 
 // Import routes
-import { authRoutes, loreRoutes, audioRoutes, healthRoutes } from './routes';
-import userRoutes from './routes/user.routes';
+import { authRoutes, loreRoutes, audioRoutes, healthRoutes, favoritesRoutes, userRoutes } from './routes';
 
 const PORT = process.env.PORT || 3100;
 const app = express();
@@ -38,8 +37,9 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/lore', loreRoutes);
 app.use('/api/audio', audioRoutes);
-app.use('/health', healthRoutes);
+app.use('/api/favorites', favoritesRoutes);
 app.use('/api/user', userRoutes);
+app.use('/health', healthRoutes);
 
 // Stats endpoint (from lore routes)
 app.use('/api', loreRoutes);
