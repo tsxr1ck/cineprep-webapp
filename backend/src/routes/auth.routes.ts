@@ -1,4 +1,4 @@
-// Authentication routes - Firebase to Supabase (IMPROVED VERSION)
+// Authentication routes - Firebase to Supabase (FIXED VERSION)
 import { Router, Request, Response } from 'express';
 import { admin } from '../config/firebase';
 import { supabase } from '../config/supabase';
@@ -8,7 +8,6 @@ const router = Router();
 /**
  * POST /api/auth/firebase-to-supabase
  * Authenticates a Firebase user and creates/updates their Supabase session
- * Now includes automatic free plan membership creation
  */
 router.post('/firebase-to-supabase', async (req: Request, res: Response): Promise<any> => {
     try {
@@ -26,48 +25,65 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
 
         console.log(`[AUTH] Usuario: ${email}`);
 
-        // Create or Update user in Supabase Auth
+        // ========== STEP 1: Get or Create Supabase User ==========
         let supabaseUserId: string | undefined;
-        const { data: createData, error: createError } = await supabase.auth.admin.createUser({
-            email,
-            email_confirm: true,
-            user_metadata: {
-                full_name: displayName,
-                avatar_url: photoURL,
-                firebase_uid: decodedToken.uid,
-                provider: 'google'
-            }
-        });
 
-        if (createError && createError.message.includes('already registered')) {
-            // User exists in auth.users, find them
-            const { data: searchData } = await supabase.auth.admin.listUsers();
-            const existingUser = searchData.users.find((u) => u.email === email);
-            if (existingUser) {
-                supabaseUserId = existingUser.id;
-                await supabase.auth.admin.updateUserById(existingUser.id, {
-                    user_metadata: {
-                        full_name: displayName,
-                        avatar_url: photoURL,
-                        firebase_uid: decodedToken.uid
-                    }
-                });
+        // First, try to find existing user
+        const { data: searchData } = await supabase.auth.admin.listUsers();
+        const existingUser = searchData.users.find((u) => u.email === email);
+
+        if (existingUser) {
+            // User exists, use their ID
+            console.log(`[AUTH] Existing user found: ${email}`);
+            supabaseUserId = existingUser.id;
+
+            // Update their metadata
+            await supabase.auth.admin.updateUserById(existingUser.id, {
+                user_metadata: {
+                    full_name: displayName,
+                    avatar_url: photoURL,
+                    firebase_uid: decodedToken.uid,
+                    provider: 'google'
+                }
+            });
+        } else {
+            // User doesn't exist, create them
+            console.log(`[AUTH] Creating new user: ${email}`);
+            const { data: createData, error: createError } = await supabase.auth.admin.createUser({
+                email,
+                email_confirm: true,
+                user_metadata: {
+                    full_name: displayName,
+                    avatar_url: photoURL,
+                    firebase_uid: decodedToken.uid,
+                    provider: 'google'
+                }
+            });
+
+            if (createError) {
+                console.error('[AUTH] Error creating user:', createError.message);
+                throw createError;
             }
-        } else if (createData?.user) {
+
+            if (!createData?.user) {
+                throw new Error('No se pudo crear el usuario');
+            }
+
             supabaseUserId = createData.user.id;
+            console.log(`[AUTH] New user created with ID: ${supabaseUserId}`);
         }
 
         if (!supabaseUserId) {
             throw new Error('No se pudo obtener el ID del usuario');
         }
 
-        // ========== STEP 1: Create/Update user in public.users table ==========
+        // ========== STEP 2: Create/Update user in public.users table ==========
         const { error: upsertError } = await supabase
             .from('users')
             .upsert({
                 id: supabaseUserId,
                 email,
-                password_hash: 'oauth_google', // Placeholder for OAuth users
+                password_hash: 'oauth_google',
                 full_name: displayName || null,
                 avatar_url: photoURL || null,
                 email_verified: true,
@@ -85,7 +101,7 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
 
         console.log(`[AUTH] User synced to public.users: ${email}`);
 
-        // ========== STEP 2: Get or Create Free Plan ==========
+        // ========== STEP 3: Get or Create Free Plan ==========
         let { data: freePlan, error: planError } = await supabase
             .from('plans')
             .select('*')
@@ -93,7 +109,6 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
             .eq('is_active', true)
             .single();
 
-        // If free plan doesn't exist, create it
         if (planError || !freePlan) {
             console.log('[AUTH] Free plan not found, creating one...');
             const { data: newPlan, error: createPlanError } = await supabase
@@ -124,7 +139,7 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
             console.log('[AUTH] Free plan created successfully');
         }
 
-        // ========== STEP 3: Check if user already has a membership ==========
+        // ========== STEP 4: Check if user already has a membership ==========
         const { data: existingMembership } = await supabase
             .from('memberships')
             .select('*')
@@ -132,7 +147,6 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
             .eq('status', 'active')
             .single();
 
-        // ========== STEP 4: Create membership if user doesn't have one ==========
         if (!existingMembership) {
             console.log(`[AUTH] Creating free membership for user: ${email}`);
 
@@ -162,14 +176,14 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
             console.log(`[AUTH] User already has an active membership: ${email}`);
         }
 
-        // ========== STEP 5: Initialize usage tracking for current period ==========
+        // ========== STEP 5: Initialize usage tracking ==========
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
 
         const endOfMonth = new Date(startOfMonth);
         endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-        endOfMonth.setDate(0); // Last day of current month
+        endOfMonth.setDate(0);
         endOfMonth.setHours(23, 59, 59, 999);
 
         const { data: existingUsage } = await supabase
@@ -204,7 +218,7 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
             }
         }
 
-        // ========== STEP 6: Initialize user preferences if they don't exist ==========
+        // ========== STEP 6: Initialize user preferences ==========
         const { data: existingPreferences } = await supabase
             .from('user_preferences')
             .select('*')
@@ -228,18 +242,25 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
             console.log(`[AUTH] User preferences initialized for: ${email}`);
         }
 
-        // ========== STEP 7: Generate Magic Link for session ==========
+        // ========== STEP 7: Generate session tokens ==========
+        console.log(`[AUTH] Generating session for: ${email}`);
+
         const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
             type: 'magiclink',
             email
         });
 
-        if (linkError) throw linkError;
+        if (linkError) {
+            console.error('[AUTH] Error generating magic link:', linkError.message);
+            throw linkError;
+        }
 
         const otpToken = linkData.properties?.email_otp ||
             new URL(linkData.properties?.action_link).searchParams.get('token');
 
-        if (!otpToken) throw new Error('Error generando token');
+        if (!otpToken) {
+            throw new Error('Error generando token OTP');
+        }
 
         const { data: sessionData, error: sessionError } = await supabase.auth.verifyOtp({
             token: otpToken,
@@ -247,18 +268,30 @@ router.post('/firebase-to-supabase', async (req: Request, res: Response): Promis
             email
         });
 
-        if (sessionError) throw sessionError;
+        if (sessionError) {
+            console.error('[AUTH] Error verifying OTP:', sessionError.message);
+            throw sessionError;
+        }
 
-        console.log(`[AUTH] ✅ Complete onboarding successful for: ${email}`);
+        if (!sessionData.session?.access_token) {
+            throw new Error('No se generó access_token en la sesión');
+        }
+
+        console.log(`[AUTH] ✅ Authentication successful for: ${email}`);
 
         return res.json({
-            access_token: sessionData.session?.access_token,
-            refresh_token: sessionData.session?.refresh_token,
+            access_token: sessionData.session.access_token,
+            refresh_token: sessionData.session.refresh_token,
             user: sessionData.user,
         });
+
     } catch (error: any) {
         console.error('[AUTH ERROR]:', error.message);
-        return res.status(500).json({ error: error.message });
+        console.error('[AUTH ERROR STACK]:', error.stack);
+        return res.status(500).json({
+            error: error.message || 'Error interno del servidor',
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 
