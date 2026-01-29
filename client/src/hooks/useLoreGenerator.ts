@@ -221,12 +221,7 @@ export function useLoreGenerator(movieId: number): UseLoreGeneratorReturn {
     /**
      * Simula progreso de stages para datos cacheados/mock
      */
-    const simulateProgress = async (): Promise<void> => {
-        for (let i = 1; i <= 4; i++) {
-            setStage(i);
-            await sleep(400);
-        }
-    };
+
 
     return {
         generateLore,
@@ -257,31 +252,7 @@ function sleep(ms: number): Promise<void> {
  */
 const CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
 
-/**
- * Obtiene análisis del cache si existe y es válido
- */
-function getCachedAnalysis(movieId: number): LoreAnalysis | null {
-    try {
-        const cached = localStorage.getItem(`cineprep_lore_${movieId}`);
-        if (!cached) return null;
 
-        const { data, timestamp } = JSON.parse(cached);
-        const isValid = Date.now() - timestamp < CACHE_TTL;
-
-        if (!isValid) {
-            // Cache expirado, eliminarlo
-            localStorage.removeItem(`cineprep_lore_${movieId}`);
-            console.log('🗑️ Cache expirado eliminado');
-            return null;
-        }
-
-        return data;
-
-    } catch (error) {
-        console.error('Error reading cache:', error);
-        return null;
-    }
-}
 
 /**
  * Guarda análisis en cache local

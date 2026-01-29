@@ -43,7 +43,7 @@ export default function PricingPage() {
             maxAnalyses: 50,
             maxAudio: 20,
             icon: Zap,
-            iconColor: 'text-purple-400',
+            iconColor: 'text-purple-500',
             gradient: 'from-purple-500/10 to-pink-500/10',
             borderGradient: 'from-purple-500/20 to-pink-500/20',
             features: [
@@ -67,7 +67,7 @@ export default function PricingPage() {
             maxAnalyses: -1,
             maxAudio: -1,
             icon: Crown,
-            iconColor: 'text-yellow-400',
+            iconColor: 'text-yellow-500',
             gradient: 'from-yellow-500/10 to-orange-500/10',
             borderGradient: 'from-yellow-500/20 to-orange-500/20',
             features: [
@@ -124,7 +124,7 @@ export default function PricingPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0A0A0F] pt-24 pb-20 px-4">
+        <div className="min-h-screen bg-background pt-24 pb-20 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <motion.div
@@ -135,28 +135,28 @@ export default function PricingPage() {
                 >
                     <Badge
                         variant="secondary"
-                        className="mb-4 bg-[#FF6B35]/10 text-[#FF6B35] border-[#FF6B35]/20"
+                        className="mb-4 bg-[#FF6B35]/10 text-primary border-[#FF6B35]/20"
                     >
                         Precios Simples y Transparentes
                     </Badge>
-                    <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                    <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
                         Elige tu
                         <span className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] bg-clip-text text-transparent">
                             {' '}Plan Perfecto
                         </span>
                     </h1>
-                    <p className="text-xl text-[#A0A0AB] max-w-2xl mx-auto mb-8">
+                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
                         Prepárate para tus películas favoritas con análisis profundos
                         y contenido generado por IA
                     </p>
 
                     {/* Billing Toggle */}
-                    <div className="inline-flex items-center gap-3 p-1 bg-white/5 rounded-full border border-white/10">
+                    <div className="inline-flex items-center gap-3 p-1 bg-muted/50 rounded-full border border-border">
                         <button
                             onClick={() => setBillingCycle('monthly')}
                             className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'monthly'
-                                    ? 'bg-[#FF6B35] text-white shadow-lg shadow-[#FF6B35]/25'
-                                    : 'text-[#A0A0AB] hover:text-white'
+                                    ? 'bg-[#FF6B35] text-foreground shadow-lg shadow-primary/25'
+                                    : 'text-muted-foreground hover:text-foreground'
                                 }`}
                         >
                             Mensual
@@ -164,12 +164,12 @@ export default function PricingPage() {
                         <button
                             onClick={() => setBillingCycle('yearly')}
                             className={`px-6 py-2 rounded-full text-sm font-medium transition-all relative ${billingCycle === 'yearly'
-                                    ? 'bg-[#FF6B35] text-white shadow-lg shadow-[#FF6B35]/25'
-                                    : 'text-[#A0A0AB] hover:text-white'
+                                    ? 'bg-[#FF6B35] text-foreground shadow-lg shadow-primary/25'
+                                    : 'text-muted-foreground hover:text-foreground'
                                 }`}
                         >
                             Anual
-                            <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[9px] font-bold bg-green-500 text-white rounded-full">
+                            <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[9px] font-bold bg-green-500 text-foreground rounded-full">
                                 -17%
                             </span>
                         </button>
@@ -190,14 +190,14 @@ export default function PricingPage() {
                             >
                                 <div
                                     className={`relative h-full rounded-3xl border backdrop-blur-xl transition-all duration-300 hover:scale-105 ${plan.highlighted
-                                            ? 'bg-gradient-to-b from-white/10 to-white/5 border-[#FF6B35]/30 shadow-2xl shadow-[#FF6B35]/20'
-                                            : `bg-gradient-to-b ${plan.gradient} border-white/10`
+                                            ? 'bg-gradient-to-b from-white/10 to-white/5 border-[#FF6B35]/30 shadow-2xl shadow-primary/20'
+                                            : `bg-gradient-to-b ${plan.gradient} border-border`
                                         }`}
                                 >
                                     {/* Badge */}
                                     {plan.badge && (
                                         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                                            <Badge className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white border-0 shadow-lg">
+                                            <Badge className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground border-0 shadow-lg">
                                                 {plan.badge}
                                             </Badge>
                                         </div>
@@ -210,32 +210,32 @@ export default function PricingPage() {
                                         </div>
 
                                         {/* Plan Name */}
-                                        <h3 className="text-2xl font-bold text-white mb-2">
+                                        <h3 className="text-2xl font-bold text-foreground mb-2">
                                             {plan.name}
                                         </h3>
-                                        <p className="text-[#A0A0AB] mb-6">
+                                        <p className="text-muted-foreground mb-6">
                                             {plan.description}
                                         </p>
 
                                         {/* Price */}
                                         <div className="mb-6">
                                             <div className="flex items-baseline gap-2">
-                                                <span className="text-5xl font-bold text-white">
+                                                <span className="text-5xl font-bold text-foreground">
                                                     {getPrice(plan)}
                                                 </span>
                                                 {plan.priceMonthly > 0 && (
-                                                    <span className="text-[#A0A0AB]">/mes</span>
+                                                    <span className="text-muted-foreground">/mes</span>
                                                 )}
                                             </div>
                                             {getTotalPrice(plan) && (
-                                                <p className="text-sm text-[#6B6B78] mt-1">
+                                                <p className="text-sm text-muted-foreground mt-1">
                                                     {getTotalPrice(plan)}
                                                 </p>
                                             )}
                                             {getSavings(plan) && (
                                                 <Badge
                                                     variant="secondary"
-                                                    className="mt-2 bg-green-500/10 text-green-400 border-green-500/20"
+                                                    className="mt-2 bg-green-500/10 text-green-500 border-green-500/20"
                                                 >
                                                     {getSavings(plan)}
                                                 </Badge>
@@ -247,8 +247,8 @@ export default function PricingPage() {
                                             onClick={() => handleSelectPlan(plan)}
                                             disabled={isCurrentPlan(plan.slug)}
                                             className={`w-full mb-8 ${plan.highlighted
-                                                    ? 'bg-gradient-to-r from-[#FF6B35] to-[#F7931E] hover:opacity-90 text-white shadow-lg shadow-[#FF6B35]/25'
-                                                    : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
+                                                    ? 'bg-gradient-to-r from-[#FF6B35] to-[#F7931E] hover:opacity-90 text-foreground shadow-lg shadow-primary/25'
+                                                    : 'bg-muted/50 hover:bg-muted text-foreground border border-border'
                                                 }`}
                                             size="lg"
                                         >
@@ -266,13 +266,13 @@ export default function PricingPage() {
 
                                         {/* Features */}
                                         <div className="space-y-3">
-                                            <p className="text-xs font-semibold text-[#A0A0AB] uppercase tracking-wider mb-4">
+                                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
                                                 Características incluidas:
                                             </p>
                                             {plan.features.map((feature, i) => (
                                                 <div key={i} className="flex items-start gap-3">
                                                     <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#FF6B35]/10 flex items-center justify-center mt-0.5">
-                                                        <Check className="w-3 h-3 text-[#FF6B35]" />
+                                                        <Check className="w-3 h-3 text-primary" />
                                                     </div>
                                                     <span className="text-[#E4E4E7] text-sm">
                                                         {feature}
@@ -284,15 +284,15 @@ export default function PricingPage() {
                                         {/* Limits Info */}
                                         <div className="mt-6 pt-6 border-t border-white/5">
                                             <div className="flex items-center justify-between text-sm">
-                                                <span className="text-[#6B6B78]">Análisis</span>
-                                                <span className="text-white font-medium">
+                                                <span className="text-muted-foreground">Análisis</span>
+                                                <span className="text-foreground font-medium">
                                                     {plan.maxAnalyses === -1 ? '∞ Ilimitado' : `${plan.maxAnalyses}/mes`}
                                                 </span>
                                             </div>
                                             {plan.maxAudio > 0 && (
                                                 <div className="flex items-center justify-between text-sm mt-2">
-                                                    <span className="text-[#6B6B78]">Generación de Audio</span>
-                                                    <span className="text-white font-medium">
+                                                    <span className="text-muted-foreground">Generación de Audio</span>
+                                                    <span className="text-foreground font-medium">
                                                         {plan.maxAudio === -1 ? '∞ Ilimitado' : `${plan.maxAudio}/mes`}
                                                     </span>
                                                 </div>
@@ -312,7 +312,7 @@ export default function PricingPage() {
                     transition={{ duration: 0.5, delay: 0.4 }}
                     className="mt-24 max-w-3xl mx-auto"
                 >
-                    <h2 className="text-3xl font-bold text-white text-center mb-12">
+                    <h2 className="text-3xl font-bold text-foreground text-center mb-12">
                         Preguntas Frecuentes
                     </h2>
                     <div className="space-y-4">
@@ -336,12 +336,12 @@ export default function PricingPage() {
                         ].map((faq, index) => (
                             <div
                                 key={index}
-                                className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl"
+                                className="p-6 rounded-2xl bg-muted/50 border border-border backdrop-blur-xl"
                             >
-                                <h3 className="text-lg font-semibold text-white mb-2">
+                                <h3 className="text-lg font-semibold text-foreground mb-2">
                                     {faq.q}
                                 </h3>
-                                <p className="text-[#A0A0AB]">
+                                <p className="text-muted-foreground">
                                     {faq.a}
                                 </p>
                             </div>
@@ -357,15 +357,15 @@ export default function PricingPage() {
                     className="mt-24 text-center"
                 >
                     <div className="inline-block p-8 rounded-3xl bg-gradient-to-r from-[#FF6B35]/10 to-[#F7931E]/10 border border-[#FF6B35]/20">
-                        <h3 className="text-2xl font-bold text-white mb-4">
+                        <h3 className="text-2xl font-bold text-foreground mb-4">
                             ¿Tienes preguntas?
                         </h3>
-                        <p className="text-[#A0A0AB] mb-6">
+                        <p className="text-muted-foreground mb-6">
                             Nuestro equipo está aquí para ayudarte a elegir el mejor plan
                         </p>
                         <Button
                             variant="outline"
-                            className="border-white/20 text-white hover:bg-white/10"
+                            className="border-border text-foreground hover:bg-muted"
                         >
                             Contactar Soporte
                         </Button>

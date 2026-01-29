@@ -1,5 +1,5 @@
 // src/components/AudioGenerationButton.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Play, Pause, Loader2, Volume2, Download, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -15,7 +15,7 @@ type AudioState = 'idle' | 'generating' | 'ready' | 'playing' | 'paused' | 'erro
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3100';
 
-export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioGenerationButtonProps) {
+export function AudioGenerationButton({ narrative, movieTitle }: AudioGenerationButtonProps) {
     const { session, canGenerateAudio, getRemainingAudio, refreshUsage } = useAuth();
 
     const [state, setState] = useState<AudioState>('idle');
@@ -182,13 +182,13 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                         variant="outline"
                         onClick={generateAudio}
                         disabled={!canGenerateAudio()}
-                        className="text-xs text-[#A0A0AB] hover:text-white border-white/20 hover:border-[#FF6B35]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-xs text-muted-foreground hover:text-foreground border-border hover:border-[#FF6B35]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Volume2 className="w-3.5 h-3.5 mr-1.5" />
                         Generar Audio
                     </Button>
                     {remainingCredits !== -1 && (
-                        <p className="text-xs text-[#6B6B78]">
+                        <p className="text-xs text-muted-foreground">
                             {remainingCredits} generaciones restantes
                         </p>
                     )}
@@ -203,19 +203,19 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                     className="bg-[#FF6B35]/10 border border-[#FF6B35]/30 rounded-lg p-3"
                 >
                     <div className="flex items-center gap-3">
-                        <Loader2 className="w-4 h-4 text-[#FF6B35] animate-spin" />
+                        <Loader2 className="w-4 h-4 text-primary animate-spin" />
                         <div className="flex-1">
-                            <p className="text-xs font-medium text-white">
+                            <p className="text-xs font-medium text-foreground">
                                 Generando audio con IA...
                             </p>
-                            <p className="text-xs text-[#6B6B78] mt-0.5">
+                            <p className="text-xs text-muted-foreground mt-0.5">
                                 Esto puede tardar 10-20 segundos
                             </p>
                         </div>
                     </div>
 
                     {/* Fake progress bar for UX */}
-                    <div className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div className="mt-2 h-1 bg-muted rounded-full overflow-hidden">
                         <motion.div
                             className="h-full bg-gradient-to-r from-[#FF6B35] to-[#F7931E]"
                             initial={{ width: '0%' }}
@@ -234,13 +234,13 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                     className="bg-[#4ECDC4]/10 border border-[#4ECDC4]/30 rounded-lg p-3"
                 >
                     <div className="flex items-center gap-2 mb-2">
-                        <CheckCircle2 className="w-4 h-4 text-[#4ECDC4]" />
-                        <p className="text-xs font-medium text-white flex-1">
+                        <CheckCircle2 className="w-4 h-4 text-teal-500" />
+                        <p className="text-xs font-medium text-foreground flex-1">
                             Audio Generado
                         </p>
                         <button
                             onClick={downloadAudio}
-                            className="text-[#6B6B78] hover:text-white transition-colors"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
                             title="Descargar audio"
                         >
                             <Download className="w-3.5 h-3.5" />
@@ -254,21 +254,21 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                             className="w-8 h-8 rounded-full bg-[#4ECDC4] hover:bg-[#4ECDC4]/80 flex items-center justify-center transition-all"
                         >
                             {state === 'playing' ? (
-                                <Pause className="w-4 h-4 text-white" fill="white" />
+                                <Pause className="w-4 h-4 text-foreground" fill="white" />
                             ) : (
-                                <Play className="w-4 h-4 text-white ml-0.5" fill="white" />
+                                <Play className="w-4 h-4 text-foreground ml-0.5" fill="white" />
                             )}
                         </button>
 
                         {/* Progress Bar */}
-                        <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                             <motion.div
                                 className="h-full bg-[#4ECDC4]"
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
 
-                        <span className="text-xs text-[#6B6B78] min-w-[40px] text-right">
+                        <span className="text-xs text-muted-foreground min-w-[40px] text-right">
                             {Math.round(progress)}%
                         </span>
                     </div>
@@ -291,12 +291,12 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                                     />
                                 ))}
                             </div>
-                            <p className="text-xs text-[#4ECDC4]">Reproduciendo...</p>
+                            <p className="text-xs text-teal-500">Reproduciendo...</p>
                         </div>
                     )}
 
                     {creditsRemaining !== null && creditsRemaining !== -1 && (
-                        <p className="text-xs text-[#6B6B78] mt-2">
+                        <p className="text-xs text-muted-foreground mt-2">
                             {creditsRemaining} generaciones restantes
                         </p>
                     )}
@@ -316,7 +316,7 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                             Límite Alcanzado
                         </p>
                     </div>
-                    <p className="text-xs text-[#A0A0AB] mb-2">{error}</p>
+                    <p className="text-xs text-muted-foreground mb-2">{error}</p>
                     <Button
                         size="sm"
                         variant="outline"
@@ -335,12 +335,12 @@ export function AudioGenerationButton({ narrative, movieTitle, movieId }: AudioG
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-red-500/10 border border-red-500/30 rounded-lg p-3"
                 >
-                    <p className="text-xs text-red-400 mb-2">{error}</p>
+                    <p className="text-xs text-red-500 mb-2">{error}</p>
                     <Button
                         size="sm"
                         variant="outline"
                         onClick={generateAudio}
-                        className="text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
+                        className="text-xs border-red-500/30 text-red-500 hover:bg-red-500/10"
                     >
                         Reintentar
                     </Button>

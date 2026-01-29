@@ -20,8 +20,8 @@ export default function MovieCard({ movie, onClick, index = 0 }: MovieCardProps)
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ 
-        duration: 0.5, 
+      transition={{
+        duration: 0.5,
         delay: index * 0.05,
         ease: [0.25, 0.46, 0.45, 0.94]
       }}
@@ -29,7 +29,7 @@ export default function MovieCard({ movie, onClick, index = 0 }: MovieCardProps)
       className="cursor-pointer group"
       onClick={() => onClick(movie)}
     >
-      <div className="relative overflow-hidden rounded-2xl bg-[#14141F] border border-white/5 group-hover:border-[#FF6B35]/30 transition-all duration-500 shadow-lg shadow-black/20 group-hover:shadow-2xl group-hover:shadow-[#FF6B35]/10">
+      <div className="relative overflow-hidden rounded-2xl bg-card border border-border group-hover:border-primary/30 transition-all duration-500 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/10">
         <div className="relative aspect-[2/3] overflow-hidden">
           {posterUrl ? (
             <img
@@ -39,20 +39,20 @@ export default function MovieCard({ movie, onClick, index = 0 }: MovieCardProps)
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#1C1C2E] to-[#14141F] flex items-center justify-center">
-              <Clapperboard className="w-16 h-16 text-[#3B3B4F]" />
+            <div className="w-full h-full bg-gradient-to-br from-muted to-card flex items-center justify-center">
+              <Clapperboard className="w-16 h-16 text-muted-foreground" />
             </div>
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileHover={{ opacity: 1, scale: 1 }}
             className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           >
-            <div className="w-14 h-14 rounded-full bg-[#FF6B35] flex items-center justify-center shadow-lg shadow-[#FF6B35]/30">
-              <Play className="w-6 h-6 text-white ml-1" fill="white" />
+            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
+              <Play className="w-6 h-6 text-primary-foreground ml-1" fill="currentColor" />
             </div>
           </motion.div>
 
@@ -62,7 +62,7 @@ export default function MovieCard({ movie, onClick, index = 0 }: MovieCardProps)
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 + 0.2 }}
-                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white shadow-lg shadow-[#FF6B35]/30"
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground shadow-lg shadow-primary/30"
               >
                 Estreno
               </motion.span>
@@ -72,7 +72,7 @@ export default function MovieCard({ movie, onClick, index = 0 }: MovieCardProps)
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 + 0.3 }}
-                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#4ECDC4] text-white shadow-lg shadow-[#4ECDC4]/30"
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#4ECDC4] text-foreground shadow-lg shadow-teal-500/30"
               >
                 Saga
               </motion.span>
@@ -80,19 +80,19 @@ export default function MovieCard({ movie, onClick, index = 0 }: MovieCardProps)
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-base md:text-lg font-bold text-white line-clamp-2 mb-3 group-hover:text-[#FF6B35] transition-colors duration-300">
+            <h3 className="text-base md:text-lg font-bold text-foreground line-clamp-2 mb-3 group-hover:text-primary transition-colors duration-300">
               {movie.title}
             </h3>
             <div className="flex items-center gap-3 text-sm">
               {releaseYear && (
-                <span className="flex items-center gap-1.5 text-[#A0A0AB] bg-white/5 px-2 py-1 rounded-lg">
+                <span className="flex items-center gap-1.5 text-muted-foreground bg-muted/50 px-2 py-1 rounded-lg">
                   <Calendar className="w-3.5 h-3.5" />
                   {releaseYear}
                 </span>
               )}
               {movie.vote_average > 0 && (
-                <span className="flex items-center gap-1.5 text-[#FFD166] bg-[#FFD166]/10 px-2 py-1 rounded-lg font-medium">
-                  <Star className="w-3.5 h-3.5 fill-[#FFD166]" />
+                <span className="flex items-center gap-1.5 text-yellow-500 bg-[#FFD166]/10 px-2 py-1 rounded-lg font-medium">
+                  <Star className="w-3.5 h-3.5 fill-yellow-500" />
                   {movie.vote_average.toFixed(1)}
                 </span>
               )}

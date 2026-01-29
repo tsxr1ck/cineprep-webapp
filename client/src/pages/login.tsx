@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Film, Sparkles, Shield, Zap } from 'lucide-react';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
@@ -89,7 +89,7 @@ export default function LoginPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35]/10 via-transparent to-[#4ECDC4]/5" />
             <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#FF6B35]/20 rounded-full blur-[120px]" />
@@ -104,7 +104,7 @@ export default function LoginPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="bg-[#1C1C2E]/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl"
+                    className="bg-card/50 backdrop-blur-xl border border-border rounded-3xl p-8 md:p-10 shadow-2xl"
                 >
                     {/* Logo/Brand */}
                     <div className="text-center mb-8">
@@ -114,14 +114,14 @@ export default function LoginPage() {
                             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                             className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] mb-4"
                         >
-                            <Film className="w-8 h-8 text-white" />
+                            <Film className="w-8 h-8 text-foreground" />
                         </motion.div>
 
-                        <h1 className="text-3xl font-bold text-white mb-2">
+                        <h1 className="text-3xl font-bold text-foreground mb-2">
                             Bienvenido a <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] to-[#F7931E]">CinePrep</span>
                         </h1>
 
-                        <p className="text-[#A0A0AB] text-sm">
+                        <p className="text-muted-foreground text-sm">
                             Inicia sesión para acceder a resúmenes inteligentes de tus sagas favoritas
                         </p>
                     </div>
@@ -148,10 +148,10 @@ export default function LoginPage() {
                     {/* Divider */}
                     <div className="relative my-8">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/10"></div>
+                            <div className="w-full border-t border-border"></div>
                         </div>
                         <div className="relative flex justify-center text-xs">
-                            <span className="px-4 bg-[#1C1C2E] text-[#6B6B78]">
+                            <span className="px-4 bg-card text-muted-foreground">
                                 Rápido, seguro y sin complicaciones
                             </span>
                         </div>
@@ -170,9 +170,9 @@ export default function LoginPage() {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.7 + index * 0.1 }}
-                                className="flex items-center gap-3 text-sm text-[#A0A0AB]"
+                                className="flex items-center gap-3 text-sm text-muted-foreground"
                             >
-                                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6B35]/20 to-[#F7931E]/20 flex items-center justify-center text-[#FF6B35]">
+                                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6B35]/20 to-[#F7931E]/20 flex items-center justify-center text-primary">
                                     {benefit.icon}
                                 </div>
                                 <span>{benefit.text}</span>
@@ -185,14 +185,14 @@ export default function LoginPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.9 }}
-                        className="text-xs text-[#6B6B78] text-center mt-8"
+                        className="text-xs text-muted-foreground text-center mt-8"
                     >
                         Al continuar, aceptas nuestros{' '}
-                        <a href="#" className="text-[#4ECDC4] hover:underline">
+                        <a href="#" className="text-teal-500 hover:underline">
                             Términos de Servicio
                         </a>
                         {' '}y{' '}
-                        <a href="#" className="text-[#4ECDC4] hover:underline">
+                        <a href="#" className="text-teal-500 hover:underline">
                             Política de Privacidad
                         </a>
                     </motion.p>
@@ -205,7 +205,7 @@ export default function LoginPage() {
                     transition={{ delay: 1 }}
                     className="text-center mt-6"
                 >
-                    <a href="/" className="text-sm text-[#A0A0AB] hover:text-white transition-colors inline-flex items-center gap-2">
+                    <a href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2">
                         ← Volver al inicio
                     </a>
                 </motion.div>
@@ -223,7 +223,7 @@ export default function LoginPage() {
                 }}
                 className="absolute top-20 left-10 opacity-20"
             >
-                <Sparkles className="w-6 h-6 text-[#FFD166]" />
+                <Sparkles className="w-6 h-6 text-yellow-500" />
             </motion.div>
 
             <motion.div
@@ -238,7 +238,7 @@ export default function LoginPage() {
                 }}
                 className="absolute bottom-20 right-10 opacity-20"
             >
-                <Film className="w-6 h-6 text-[#4ECDC4]" />
+                <Film className="w-6 h-6 text-teal-500" />
             </motion.div>
         </div>
     );

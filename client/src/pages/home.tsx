@@ -27,7 +27,7 @@ export default function HomePage() {
         setUpcomingMovies(upcoming);
         setPopularMovies(popular);
         setNowPlayingMovies(nowPlaying);
-        
+
         if (popular.length > 0) {
           setFeaturedMovie(popular[0]);
         }
@@ -49,7 +49,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
         {featuredMovie && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
@@ -60,9 +60,9 @@ export default function HomePage() {
               alt=""
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F] via-[#0A0A0F]/90 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/60 to-transparent" />
-            <div className="absolute inset-0 bg-[#0A0A0F]/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+            <div className="absolute inset-0 bg-background/40" />
           </motion.div>
         )}
 
@@ -78,23 +78,23 @@ export default function HomePage() {
             >
               <div className="flex items-center gap-2 mb-6">
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#FF6B35]/10 border border-[#FF6B35]/20">
-                  <Sparkles className="w-4 h-4 text-[#FF6B35]" />
-                  <span className="text-[#FF6B35] font-medium text-sm uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="text-primary font-medium text-sm uppercase tracking-wider">
                     Preparate para el cine
                   </span>
                 </div>
               </div>
 
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight leading-[1.1]">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6 tracking-tight leading-[1.1]">
                 Nunca mas te pierdas{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] via-[#F7931E] to-[#FFD166]">
                   la historia
                 </span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-[#A0A0AB] leading-relaxed max-w-2xl mb-10">
+              <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-2xl mb-10">
                 Obtene resumenes inteligentes de las precuelas antes de ver los nuevos estrenos.
-                <span className="text-white font-medium"> Sin spoilers</span>, solo el lore que necesitas.
+                <span className="text-foreground font-medium"> Sin spoilers</span>, solo el lore que necesitas.
               </p>
 
               <div className="flex flex-wrap gap-4">
@@ -102,7 +102,7 @@ export default function HomePage() {
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => document.getElementById('upcoming')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white font-semibold text-lg shadow-lg shadow-[#FF6B35]/25 hover:shadow-[#FF6B35]/40 transition-all"
+                  className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground font-semibold text-lg shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
                 >
                   <Play className="w-5 h-5" />
                   Explorar peliculas
@@ -121,10 +121,10 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + index * 0.1 }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/50 border border-border backdrop-blur-sm"
                   >
                     <feature.icon className="w-4 h-4" style={{ color: feature.color }} />
-                    <span className="text-[#A0A0AB] text-sm">{feature.text}</span>
+                    <span className="text-muted-foreground text-sm">{feature.text}</span>
                   </motion.div>
                 ))}
               </div>
@@ -141,7 +141,7 @@ export default function HomePage() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
-            className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2"
+            className="w-6 h-10 rounded-full border-2 border-border flex items-start justify-center p-2"
           >
             <motion.div className="w-1.5 h-1.5 rounded-full bg-white/60" />
           </motion.div>

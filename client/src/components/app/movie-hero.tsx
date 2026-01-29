@@ -37,9 +37,8 @@ export function MovieHero({
             />
 
             {/* Gradient Overlays */}
-            {/* Gradient Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/80 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F] via-[#0A0A0F]/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
             <div className="absolute inset-0 bg-black/20" /> {/* General darkening */}
 
             {/* Content */}
@@ -56,7 +55,7 @@ export function MovieHero({
                             <Badge
                                 key={genre.id}
                                 variant="outline"
-                                className="border-white/20 text-gray-200 bg-black/40 backdrop-blur-sm"
+                                className="border-border text-foreground bg-black/40 backdrop-blur-sm"
                             >
                                 {genre.name}
                             </Badge>
@@ -64,12 +63,12 @@ export function MovieHero({
                     </div>
 
                     {/* Title */}
-                    <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
+                    <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-4 tracking-tight drop-shadow-lg">
                         {movie.title}
                     </h1>
 
                     {/* Metadata */}
-                    <div className="flex items-center gap-6 text-gray-200 mb-6 flex-wrap drop-shadow-md">
+                    <div className="flex items-center gap-6 text-foreground mb-6 flex-wrap drop-shadow-md">
                         <span className="flex items-center gap-2">
                             <Calendar className="w-5 h-5" />
                             {releaseDate}
@@ -87,7 +86,7 @@ export function MovieHero({
                     </div>
 
                     {/* Overview */}
-                    <p className="text-lg text-gray-300 mb-8 line-clamp-3 drop-shadow-md max-w-xl leading-relaxed">
+                    <p className="text-lg text-muted-foreground mb-8 line-clamp-3 drop-shadow-md max-w-xl leading-relaxed">
                         {movie.overview}
                     </p>
 
@@ -95,7 +94,7 @@ export function MovieHero({
                     {hasCollection ? (
                         <Button
                             size="lg"
-                            className="bg-gradient-hero text-white font-semibold px-8 py-6 text-lg hover:shadow-cinema-lg transition-all disabled:opacity-50"
+                            className="bg-gradient-hero text-foreground font-semibold px-8 py-6 text-lg hover:shadow-lg transition-all disabled:opacity-50"
                             onClick={onAnalyze}
                             disabled={isAnalyzing}
                         >
@@ -111,7 +110,7 @@ export function MovieHero({
                             )}
                         </Button>
                     ) : (
-                        <div className="flex items-center gap-2 text-gray-400">
+                        <div className="flex items-center gap-2 text-muted-foreground">
                             <span className="text-lg">ℹ️ Esta película no requiere conocimiento previo</span>
                         </div>
                     )}

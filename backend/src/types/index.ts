@@ -212,3 +212,41 @@ export interface RecommendationsResponse {
     recommendations: MovieRecommendation[];
     total: number;
 }
+
+// ============================================
+// USER PREFERENCES TYPES
+// ============================================
+
+export type DetailLevel = 'brief' | 'standard' | 'detailed';
+export type Tone = 'neutral' | 'engaging' | 'dramatic' | 'humorous';
+export type Theme = 'light' | 'dark' | 'system';
+export type Language = 'es' | 'en' | 'both';
+
+export interface UserPreferences {
+    user_id: string;
+    default_language: Language | null;
+    default_detail_level: DetailLevel | null;
+    default_tone: Tone | null;
+    preferred_voice_id: string | null;
+    auto_generate_audio: boolean | null;
+    theme: Theme | null;
+    email_notifications: boolean | null;
+    new_features_newsletter: boolean | null;
+    updated_at: string | null;
+}
+
+export interface UpdatePreferencesRequest {
+    default_language?: Language;
+    default_detail_level?: DetailLevel;
+    default_tone?: Tone;
+    preferred_voice_id?: string;
+    auto_generate_audio?: boolean;
+    theme?: Theme;
+    email_notifications?: boolean;
+    new_features_newsletter?: boolean;
+}
+
+export interface PreferencesResponse {
+    preferences: UserPreferences;
+    success: boolean;
+}

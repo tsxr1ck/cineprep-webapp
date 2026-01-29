@@ -180,3 +180,51 @@ export interface UseRecommendationsReturn {
     markAsViewed: (recommendationId: string) => Promise<boolean>;
     dismiss: (recommendationId: string) => Promise<boolean>;
 }
+
+// ============================================
+// USER PREFERENCES TYPES
+// ============================================
+
+export type DetailLevel = 'brief' | 'standard' | 'detailed';
+export type Tone = 'neutral' | 'engaging' | 'dramatic' | 'humorous';
+export type Theme = 'light' | 'dark' | 'system';
+export type Language = 'es' | 'en';
+
+export interface UserPreferences {
+    user_id: string;
+    default_language: Language | null;
+    default_detail_level: DetailLevel | null;
+    default_tone: Tone | null;
+    preferred_voice_id: string | null;
+    auto_generate_audio: boolean | null;
+    theme: Theme | null;
+    email_notifications: boolean | null;
+    new_features_newsletter: boolean | null;
+    updated_at: string | null;
+}
+
+export interface PreferencesResponse {
+    preferences: UserPreferences;
+    success: boolean;
+}
+
+export interface UpdatePreferencesRequest {
+    default_language?: Language;
+    default_detail_level?: DetailLevel;
+    default_tone?: Tone;
+    preferred_voice_id?: string;
+    auto_generate_audio?: boolean;
+    theme?: Theme;
+    email_notifications?: boolean;
+    new_features_newsletter?: boolean;
+}
+
+export interface UseSettingsReturn {
+    preferences: UserPreferences | null;
+    loading: boolean;
+    error: string | null;
+    isSaving: boolean;
+    fetchPreferences: () => Promise<void>;
+    updatePreferences: (settings: UpdatePreferencesRequest) => Promise<boolean>;
+    resetPreferences: () => Promise<boolean>;
+}

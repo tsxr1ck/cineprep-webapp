@@ -84,7 +84,7 @@ export default function AudioPlayer({ audio, movieTitle }: AudioPlayerProps) {
         <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-[#FF6B35]/10 to-[#4ECDC4]/10 border border-[#FF6B35]/20 rounded-2xl p-4 md:p-6"
+            className="bg-gradient-to-r from-primary/10 to-teal-500/10 border border-border rounded-2xl p-4 md:p-6"
         >
             <div className="flex flex-col md:flex-row md:items-center gap-4">
                 {/* Play Controls */}
@@ -96,9 +96,9 @@ export default function AudioPlayer({ audio, movieTitle }: AudioPlayerProps) {
                             onClick={() => setIsPlaying(!isPlaying)}
                         >
                             {isPlaying ? (
-                                <Pause className="w-6 h-6 text-white" />
+                                <Pause className="w-6 h-6 text-foreground" />
                             ) : (
-                                <Play className="w-6 h-6 text-white ml-1" />
+                                <Play className="w-6 h-6 text-foreground ml-1" />
                             )}
                         </Button>
                     </motion.div>
@@ -106,7 +106,7 @@ export default function AudioPlayer({ audio, movieTitle }: AudioPlayerProps) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="text-[#A0A0AB] hover:text-white"
+                        className="text-muted-foreground hover:text-foreground"
                         onClick={handleRestart}
                     >
                         <RotateCcw className="w-5 h-5" />
@@ -117,14 +117,14 @@ export default function AudioPlayer({ audio, movieTitle }: AudioPlayerProps) {
                 <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                         <div>
-                            <p className="text-white font-semibold text-sm md:text-base">
+                            <p className="text-foreground font-semibold text-sm md:text-base">
                                 🎧 Narración Premium
                             </p>
-                            <p className="text-xs text-[#6B6B78]">
+                            <p className="text-xs text-muted-foreground">
                                 {audio.voice_name} • {movieTitle}
                             </p>
                         </div>
-                        <span className="text-[#A0A0AB] font-mono text-sm">
+                        <span className="text-muted-foreground font-mono text-sm">
                             {formatTime(currentTime)} / {audio.duration}
                         </span>
                     </div>
@@ -144,7 +144,7 @@ export default function AudioPlayer({ audio, movieTitle }: AudioPlayerProps) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="text-[#A0A0AB] hover:text-white"
+                        className="text-muted-foreground hover:text-foreground"
                         onClick={() => setIsMuted(!isMuted)}
                     >
                         {isMuted ? (

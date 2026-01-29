@@ -1,6 +1,6 @@
 // useFavorites Hook - Manage user favorites state
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { FavoritesService, TasteProfileService, RecommendationsService } from '@/services/favoritesService';
 import type {
     UserFavorite,

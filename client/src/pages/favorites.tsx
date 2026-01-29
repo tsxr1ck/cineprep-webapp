@@ -51,7 +51,7 @@ function FavoriteCard({ favorite, onRemove, onView }: FavoriteCardProps) {
             exit={{ opacity: 0, scale: 0.9 }}
             className="group relative"
         >
-            <Card className="overflow-hidden bg-white/5 border-white/10 hover:border-[#FF6B35]/50 transition-all duration-300">
+            <Card className="overflow-hidden bg-muted/50 border-border hover:border-[#FF6B35]/50 transition-all duration-300">
                 <div className="relative aspect-[2/3]">
                     {posterUrl ? (
                         <img
@@ -60,8 +60,8 @@ function FavoriteCard({ favorite, onRemove, onView }: FavoriteCardProps) {
                             className="w-full h-full object-cover"
                         />
                     ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-[#1A1A2E] to-[#0A0A0F] flex items-center justify-center">
-                            <Film className="w-12 h-12 text-[#6B6B78]" />
+                        <div className="w-full h-full bg-gradient-to-br from-muted to-card flex items-center justify-center">
+                            <Film className="w-12 h-12 text-muted-foreground" />
                         </div>
                     )}
 
@@ -80,7 +80,7 @@ function FavoriteCard({ favorite, onRemove, onView }: FavoriteCardProps) {
                                 <Button
                                     size="sm"
                                     variant="outline"
-                                    className="border-red-500/50 text-red-400 hover:bg-red-500/20"
+                                    className="border-red-500/50 text-red-500 hover:bg-red-500/20"
                                     onClick={() => onRemove(favorite.id)}
                                 >
                                     <Trash2 className="w-4 h-4" />
@@ -92,7 +92,7 @@ function FavoriteCard({ favorite, onRemove, onView }: FavoriteCardProps) {
                     {/* Favorite badge */}
                     <div className="absolute top-2 right-2">
                         <div className="p-1.5 rounded-full bg-[#FF6B35]/90 backdrop-blur-sm">
-                            <Heart className="w-4 h-4 text-white fill-white" />
+                            <Heart className="w-4 h-4 text-foreground fill-white" />
                         </div>
                     </div>
 
@@ -108,11 +108,11 @@ function FavoriteCard({ favorite, onRemove, onView }: FavoriteCardProps) {
                 </div>
 
                 <div className="p-3">
-                    <h3 className="font-semibold text-white truncate text-sm">
+                    <h3 className="font-semibold text-foreground truncate text-sm">
                         {favorite.movie_title}
                     </h3>
                     {favorite.release_year && (
-                        <p className="text-xs text-[#6B6B78] mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                             {favorite.release_year}
                         </p>
                     )}
@@ -122,7 +122,7 @@ function FavoriteCard({ favorite, onRemove, onView }: FavoriteCardProps) {
                                 <Badge
                                     key={genre.id}
                                     variant="outline"
-                                    className="text-[10px] border-white/20 text-[#A0A0AB]"
+                                    className="text-[10px] border-border text-muted-foreground"
                                 >
                                     {genre.name}
                                 </Badge>
@@ -155,7 +155,7 @@ function RecommendationCard({ recommendation, onView, onDismiss }: Recommendatio
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
         >
-            <Card className="overflow-hidden bg-white/5 border-white/10 hover:border-[#4ECDC4]/50 transition-all duration-300">
+            <Card className="overflow-hidden bg-muted/50 border-border hover:border-[#4ECDC4]/50 transition-all duration-300">
                 <div className="flex">
                     {/* Poster */}
                     <div className="w-24 flex-shrink-0">
@@ -166,8 +166,8 @@ function RecommendationCard({ recommendation, onView, onDismiss }: Recommendatio
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-[#1A1A2E] to-[#0A0A0F] flex items-center justify-center min-h-[144px]">
-                                <Film className="w-8 h-8 text-[#6B6B78]" />
+                            <div className="w-full h-full bg-gradient-to-br from-muted to-card flex items-center justify-center min-h-[144px]">
+                                <Film className="w-8 h-8 text-muted-foreground" />
                             </div>
                         )}
                     </div>
@@ -176,12 +176,12 @@ function RecommendationCard({ recommendation, onView, onDismiss }: Recommendatio
                     <div className="flex-1 p-4">
                         <div className="flex items-start justify-between gap-2">
                             <div className="flex-1">
-                                <h3 className="font-semibold text-white line-clamp-1">
+                                <h3 className="font-semibold text-foreground line-clamp-1">
                                     {recommendation.movie_title}
                                 </h3>
                                 <div className="flex items-center gap-2 mt-1">
                                     {recommendation.release_date && (
-                                        <span className="text-xs text-[#6B6B78] flex items-center">
+                                        <span className="text-xs text-muted-foreground flex items-center">
                                             <Calendar className="w-3 h-3 mr-1" />
                                             {new Date(recommendation.release_date).toLocaleDateString('es-MX', {
                                                 year: 'numeric',
@@ -190,7 +190,7 @@ function RecommendationCard({ recommendation, onView, onDismiss }: Recommendatio
                                         </span>
                                     )}
                                     {recommendation.vote_average && (
-                                        <Badge className="bg-[#FFD166]/20 text-[#FFD166] text-xs">
+                                        <Badge className="bg-[#FFD166]/20 text-yellow-500 text-xs">
                                             <Star className="w-3 h-3 mr-1 fill-current" />
                                             {recommendation.vote_average.toFixed(1)}
                                         </Badge>
@@ -200,16 +200,16 @@ function RecommendationCard({ recommendation, onView, onDismiss }: Recommendatio
 
                             {/* Match score */}
                             <div className="flex flex-col items-center">
-                                <div className="text-2xl font-bold text-[#4ECDC4]">
+                                <div className="text-2xl font-bold text-teal-500">
                                     {recommendation.recommendation_score}%
                                 </div>
-                                <span className="text-[10px] text-[#6B6B78]">Match</span>
+                                <span className="text-[10px] text-muted-foreground">Match</span>
                             </div>
                         </div>
 
                         {/* Reason */}
                         {recommendation.recommendation_reason && (
-                            <p className="text-xs text-[#A0A0AB] mt-2 line-clamp-2">
+                            <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
                                 {recommendation.recommendation_reason}
                             </p>
                         )}
@@ -221,7 +221,7 @@ function RecommendationCard({ recommendation, onView, onDismiss }: Recommendatio
                                     <Badge
                                         key={genre.id}
                                         variant="outline"
-                                        className="text-[10px] border-white/20 text-[#A0A0AB]"
+                                        className="text-[10px] border-border text-muted-foreground"
                                     >
                                         {genre.name}
                                     </Badge>
@@ -242,7 +242,7 @@ function RecommendationCard({ recommendation, onView, onDismiss }: Recommendatio
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="text-[#6B6B78] hover:text-red-400"
+                                className="text-muted-foreground hover:text-red-500"
                                 onClick={() => onDismiss(recommendation.id)}
                             >
                                 <X className="w-4 h-4" />
@@ -295,7 +295,7 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
     if (loading && !tasteProfile) {
         return (
             <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-[#FF6B35] animate-spin" />
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
         );
     }
@@ -303,11 +303,11 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
     if (!tasteProfile) {
         return (
             <div className="text-center py-20">
-                <Sparkles className="w-16 h-16 text-[#6B6B78] mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <Sparkles className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">
                     Aún no tienes un perfil de gustos
                 </h3>
-                <p className="text-[#6B6B78] mb-6">
+                <p className="text-muted-foreground mb-6">
                     Genera algunos análisis de lore para que podamos conocer tus preferencias
                 </p>
             </div>
@@ -319,14 +319,14 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-white">Tu Perfil de Gustos</h2>
-                    <p className="text-[#6B6B78] mt-1">
+                    <h2 className="text-2xl font-bold text-foreground">Tu Perfil de Gustos</h2>
+                    <p className="text-muted-foreground mt-1">
                         Basado en {tasteProfile.total_movies_analyzed} películas analizadas
                     </p>
                 </div>
                 <Button
                     variant="outline"
-                    className="border-white/20"
+                    className="border-border"
                     onClick={handleRefresh}
                     disabled={isRefreshing}
                 >
@@ -336,17 +336,17 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
             </div>
 
             {/* Genre Preferences */}
-            <Card className="p-6 bg-white/5 border-white/10">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                    <Film className="w-5 h-5 mr-2 text-[#FF6B35]" />
+            <Card className="p-6 bg-muted/50 border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                    <Film className="w-5 h-5 mr-2 text-primary" />
                     Géneros Favoritos
                 </h3>
                 <div className="space-y-3">
                     {topGenres.map((genre, index) => (
                         <div key={genre.name} className="flex items-center gap-3">
-                            <span className="text-[#6B6B78] w-6">{index + 1}.</span>
-                            <span className="text-white flex-1">{genre.name}</span>
-                            <div className="w-32 h-2 bg-white/10 rounded-full overflow-hidden">
+                            <span className="text-muted-foreground w-6">{index + 1}.</span>
+                            <span className="text-foreground flex-1">{genre.name}</span>
+                            <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${genre.score}%` }}
@@ -354,7 +354,7 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
                                     className="h-full bg-gradient-to-r from-[#FF6B35] to-[#F7931E] rounded-full"
                                 />
                             </div>
-                            <span className="text-[#FF6B35] font-semibold w-12 text-right">
+                            <span className="text-primary font-semibold w-12 text-right">
                                 {genre.score}%
                             </span>
                         </div>
@@ -364,19 +364,19 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
 
             {/* Franchise Preferences */}
             {topFranchises.length > 0 && (
-                <Card className="p-6 bg-white/5 border-white/10">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                        <TrendingUp className="w-5 h-5 mr-2 text-[#4ECDC4]" />
+                <Card className="p-6 bg-muted/50 border-border">
+                    <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                        <TrendingUp className="w-5 h-5 mr-2 text-teal-500" />
                         Sagas Favoritas
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {topFranchises.map((franchise) => (
                             <div
                                 key={franchise.collection_id}
-                                className="flex items-center justify-between p-3 rounded-lg bg-white/5"
+                                className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                             >
-                                <span className="text-white">{franchise.name}</span>
-                                <Badge className="bg-[#4ECDC4]/20 text-[#4ECDC4]">
+                                <span className="text-foreground">{franchise.name}</span>
+                                <Badge className="bg-[#4ECDC4]/20 text-teal-500">
                                     {franchise.score}%
                                 </Badge>
                             </div>
@@ -387,16 +387,16 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
 
             {/* Emotional Keywords */}
             {tasteProfile.emotional_keywords.length > 0 && (
-                <Card className="p-6 bg-white/5 border-white/10">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                        <Heart className="w-5 h-5 mr-2 text-red-400" />
+                <Card className="p-6 bg-muted/50 border-border">
+                    <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                        <Heart className="w-5 h-5 mr-2 text-red-500" />
                         Temas que te Emocionan
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         {tasteProfile.emotional_keywords.map((keyword) => (
                             <Badge
                                 key={keyword}
-                                className="bg-red-500/20 text-red-300 capitalize"
+                                className="bg-red-500/20 text-red-400 capitalize"
                             >
                                 {keyword}
                             </Badge>
@@ -406,16 +406,16 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
             )}
 
             {/* Notification Settings */}
-            <Card className="p-6 bg-white/5 border-white/10">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                    <Bell className="w-5 h-5 mr-2 text-[#FFD166]" />
+            <Card className="p-6 bg-muted/50 border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                    <Bell className="w-5 h-5 mr-2 text-yellow-500" />
                     Notificaciones de Recomendaciones
                 </h3>
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-white">Recibir notificaciones</p>
-                            <p className="text-sm text-[#6B6B78]">
+                            <p className="text-foreground">Recibir notificaciones</p>
+                            <p className="text-sm text-muted-foreground">
                                 Te avisaremos cuando haya películas que te puedan interesar
                             </p>
                         </div>
@@ -423,7 +423,7 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
                             variant={tasteProfile.notification_enabled ? 'default' : 'outline'}
                             className={tasteProfile.notification_enabled
                                 ? 'bg-[#4ECDC4] hover:bg-[#4ECDC4]/80'
-                                : 'border-white/20'
+                                : 'border-border'
                             }
                             onClick={handleNotificationToggle}
                         >
@@ -443,7 +443,7 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
 
                     {tasteProfile.notification_enabled && (
                         <div>
-                            <p className="text-sm text-[#6B6B78] mb-2">Frecuencia</p>
+                            <p className="text-sm text-muted-foreground mb-2">Frecuencia</p>
                             <div className="flex gap-2">
                                 {(['daily', 'weekly', 'monthly'] as NotificationFrequency[]).map((freq) => (
                                     <Button
@@ -452,7 +452,7 @@ function TasteProfileView({ profile }: TasteProfileViewProps) {
                                         variant={tasteProfile.notification_frequency === freq ? 'default' : 'outline'}
                                         className={tasteProfile.notification_frequency === freq
                                             ? 'bg-[#FF6B35]'
-                                            : 'border-white/20'
+                                            : 'border-border'
                                         }
                                         onClick={() => handleFrequencyChange(freq)}
                                     >
@@ -516,10 +516,10 @@ export default function FavoritesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-8"
                 >
-                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                        Mis <span className="text-[#FF6B35]">Favoritos</span>
+                    <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                        Mis <span className="text-primary">Favoritos</span>
                     </h1>
-                    <p className="text-[#6B6B78]">
+                    <p className="text-muted-foreground">
                         Tus análisis guardados y recomendaciones personalizadas
                     </p>
                 </motion.div>
@@ -531,8 +531,8 @@ export default function FavoritesPage() {
                             key={tab.id}
                             variant={activeTab === tab.id ? 'default' : 'outline'}
                             className={`flex items-center gap-2 ${activeTab === tab.id
-                                    ? 'bg-[#FF6B35] hover:bg-[#FF6B35]/80'
-                                    : 'border-white/20 hover:bg-white/5'
+                                ? 'bg-[#FF6B35] hover:bg-[#FF6B35]/80'
+                                : 'border-border hover:bg-muted/50'
                                 }`}
                             onClick={() => setActiveTab(tab.id)}
                         >
@@ -541,8 +541,8 @@ export default function FavoritesPage() {
                             {tab.count !== undefined && tab.count > 0 && (
                                 <Badge
                                     className={`ml-1 ${activeTab === tab.id
-                                            ? 'bg-white/20 text-white'
-                                            : 'bg-[#FF6B35]/20 text-[#FF6B35]'
+                                        ? 'bg-white/20 text-foreground'
+                                        : 'bg-[#FF6B35]/20 text-primary'
                                         }`}
                                 >
                                     {tab.count}
@@ -563,15 +563,15 @@ export default function FavoritesPage() {
                         >
                             {favorites.loading && favorites.favorites.length === 0 ? (
                                 <div className="flex items-center justify-center py-20">
-                                    <Loader2 className="w-8 h-8 text-[#FF6B35] animate-spin" />
+                                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
                                 </div>
                             ) : favorites.favorites.length === 0 ? (
                                 <div className="text-center py-20">
-                                    <Heart className="w-16 h-16 text-[#6B6B78] mx-auto mb-4" />
-                                    <h3 className="text-xl font-semibold text-white mb-2">
+                                    <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                                    <h3 className="text-xl font-semibold text-foreground mb-2">
                                         No tienes favoritos aún
                                     </h3>
-                                    <p className="text-[#6B6B78] mb-6">
+                                    <p className="text-muted-foreground mb-6">
                                         Guarda tus análisis de lore favoritos para acceder a ellos rápidamente
                                     </p>
                                     <Button
@@ -601,7 +601,7 @@ export default function FavoritesPage() {
                                         <div className="flex justify-center mt-8">
                                             <Button
                                                 variant="outline"
-                                                className="border-white/20"
+                                                className="border-border"
                                                 onClick={() => favorites.fetchFavorites()}
                                                 disabled={favorites.loading}
                                             >
@@ -637,15 +637,15 @@ export default function FavoritesPage() {
                         >
                             {recommendations.loading && recommendations.recommendations.length === 0 ? (
                                 <div className="flex items-center justify-center py-20">
-                                    <Loader2 className="w-8 h-8 text-[#4ECDC4] animate-spin" />
+                                    <Loader2 className="w-8 h-8 text-teal-500 animate-spin" />
                                 </div>
                             ) : recommendations.recommendations.length === 0 ? (
                                 <div className="text-center py-20">
-                                    <TrendingUp className="w-16 h-16 text-[#6B6B78] mx-auto mb-4" />
-                                    <h3 className="text-xl font-semibold text-white mb-2">
+                                    <TrendingUp className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                                    <h3 className="text-xl font-semibold text-foreground mb-2">
                                         No hay recomendaciones aún
                                     </h3>
-                                    <p className="text-[#6B6B78] mb-6">
+                                    <p className="text-muted-foreground mb-6">
                                         Genera más análisis de lore para que podamos recomendarte películas
                                     </p>
                                     <Button
@@ -675,7 +675,7 @@ export default function FavoritesPage() {
                                         <div className="flex justify-center mt-8">
                                             <Button
                                                 variant="outline"
-                                                className="border-white/20"
+                                                className="border-border"
                                                 onClick={() => recommendations.fetchRecommendations()}
                                                 disabled={recommendations.loading}
                                             >

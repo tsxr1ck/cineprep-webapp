@@ -26,9 +26,12 @@ import { AudioGenerationButton } from './audio-gen-button';
 interface LoreAnalysisProps {
     analysis: LoreAnalysis;
     collectionName: string | undefined;
+    analysisId?: string;
+    isFavorite?: boolean;
+    onToggleFavorite?: () => void;
 }
 
-export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisProps) {
+export default function LoreAnalysis({ analysis, collectionName, analysisId, isFavorite, onToggleFavorite }: LoreAnalysisProps) {
     const [expandedMovie, setExpandedMovie] = useState<number | null>(0);
     const [completedMovies, setCompletedMovies] = useState<number[]>([]);
     const [expandedNarratives, setExpandedNarratives] = useState<number[]>([]);
@@ -84,7 +87,7 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.1 }}
-                                className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-[#FF6B35]/20 to-[#F7931E]/20 text-[#FF6B35] border border-[#FF6B35]/30 backdrop-blur-sm flex items-center gap-2"
+                                className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-[#FF6B35]/20 to-[#F7931E]/20 text-primary border border-[#FF6B35]/30 backdrop-blur-sm flex items-center gap-2"
                             >
                                 <Sparkles className="w-3.5 h-3.5" />
                                 Análisis de Preparación
@@ -94,11 +97,26 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                     initial={{ scale: 0.9, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
                                     transition={{ delay: 0.2 }}
-                                    className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-[#4ECDC4]/20 to-[#4ECDC4]/10 text-[#4ECDC4] border border-[#4ECDC4]/30 backdrop-blur-sm flex items-center gap-2"
+                                    className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-[#4ECDC4]/20 to-[#4ECDC4]/10 text-teal-500 border border-[#4ECDC4]/30 backdrop-blur-sm flex items-center gap-2"
                                 >
                                     <Shield className="w-3.5 h-3.5" />
                                     Garantía Sin Spoilers
                                 </motion.span>
+                            )}
+                            {analysisId && (
+                                <motion.button
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ delay: 0.25 }}
+                                    onClick={onToggleFavorite}
+                                    className={`px-4 py-2 text-xs font-semibold rounded-full border backdrop-blur-sm flex items-center gap-2 transition-all ${isFavorite
+                                        ? 'bg-[#FF6B35]/20 text-[#FF6B35] border-[#FF6B35]/50'
+                                        : 'bg-muted/50 text-muted-foreground border-border hover:border-[#FF6B35]/50 hover:text-[#FF6B35]'
+                                        }`}
+                                >
+                                    <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-[#FF6B35]' : ''}`} />
+                                    {isFavorite ? 'En favoritos' : 'Añadir a favoritos'}
+                                </motion.button>
                             )}
                         </div>
 
@@ -108,7 +126,7 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                             transition={{ delay: 0.15 }}
                             className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4"
                         >
-                            <span className="text-white">Preparándote para: </span>
+                            <span className="text-foreground">Preparándote para: </span>
                             <span className="bg-gradient-to-r from-[#FF6B35] via-[#F7931E] to-[#FFD166] bg-clip-text text-transparent">
                                 {collectionName || 'Esta Película'}
                             </span>
@@ -118,14 +136,14 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.25 }}
-                            className="flex flex-wrap items-center gap-6 text-[#A0A0AB]"
+                            className="flex flex-wrap items-center gap-6 text-muted-foreground"
                         >
-                            <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5">
-                                <Clock className="w-4 h-4 text-[#FFD166]" />
+                            <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
+                                <Clock className="w-4 h-4 text-yellow-500" />
                                 {analysis.preparation_time}
                             </span>
-                            <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5">
-                                <Film className="w-4 h-4 text-[#4ECDC4]" />
+                            <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
+                                <Film className="w-4 h-4 text-teal-500" />
                                 {totalMovies} película{totalMovies > 1 ? 's' : ''} previa{totalMovies > 1 ? 's' : ''}
                             </span>
                         </motion.div>
@@ -135,7 +153,7 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="relative bg-gradient-to-br from-[#1C1C2E]/90 to-[#14141F]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-8 mb-10 overflow-hidden"
+                        className="relative bg-card/95 backdrop-blur-xl border border-border rounded-3xl p-8 mb-10 overflow-hidden"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-[#FF6B35]/5 via-transparent to-[#4ECDC4]/5" />
                         <div className="absolute top-0 right-0 w-40 h-40 bg-[#FF6B35]/10 rounded-full blur-3xl" />
@@ -192,12 +210,12 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-[#4ECDC4]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                            <CheckCircle2 className="w-6 h-6 text-[#4ECDC4]" />
+                                            <CheckCircle2 className="w-6 h-6 text-teal-500" />
                                         </div>
                                         <div>
-                                            <p className="text-[#6B6B78] text-sm mb-0.5">Completadas</p>
-                                            <p className="text-white text-2xl font-bold">
-                                                {completed}<span className="text-[#6B6B78] text-lg">/{totalMovies}</span>
+                                            <p className="text-muted-foreground text-sm mb-0.5">Completadas</p>
+                                            <p className="text-foreground text-2xl font-bold">
+                                                {completed}<span className="text-muted-foreground text-lg">/{totalMovies}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -209,11 +227,11 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-[#FFD166]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                            <Clock className="w-6 h-6 text-[#FFD166]" />
+                                            <Clock className="w-6 h-6 text-yellow-500" />
                                         </div>
                                         <div>
-                                            <p className="text-[#6B6B78] text-sm mb-0.5">Tiempo Restante</p>
-                                            <p className="text-white text-2xl font-bold">
+                                            <p className="text-muted-foreground text-sm mb-0.5">Tiempo Restante</p>
+                                            <p className="text-foreground text-2xl font-bold">
                                                 {Math.floor(remainingMinutes / 60)}h <span className="text-lg">{remainingMinutes % 60}min</span>
                                             </p>
                                         </div>
@@ -226,11 +244,11 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-[#FF6B35]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                            <BookOpen className="w-6 h-6 text-[#FF6B35]" />
+                                            <BookOpen className="w-6 h-6 text-primary" />
                                         </div>
                                         <div>
-                                            <p className="text-[#6B6B78] text-sm mb-0.5">Datos Guardados</p>
-                                            <p className="text-white text-2xl font-bold">{completed}</p>
+                                            <p className="text-muted-foreground text-sm mb-0.5">Datos Guardados</p>
+                                            <p className="text-foreground text-2xl font-bold">{completed}</p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -241,15 +259,15 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                     <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
                         <div className="xl:col-span-3 space-y-6">
                             <div className="flex items-center justify-between mb-2">
-                                <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                                <h2 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center">
-                                        <Play className="w-5 h-5 text-white" />
+                                        <Play className="w-5 h-5 text-foreground" />
                                     </div>
                                     Películas Previas
                                 </h2>
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#4ECDC4]/10 border border-[#4ECDC4]/30">
-                                    <Shield className="w-4 h-4 text-[#4ECDC4]" />
-                                    <span className="text-sm font-medium text-[#4ECDC4]">Sin Spoilers</span>
+                                    <Shield className="w-4 h-4 text-teal-500" />
+                                    <span className="text-sm font-medium text-teal-500">Sin Spoilers</span>
                                 </div>
                             </div>
 
@@ -265,17 +283,17 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
                                         layout
-                                        className={`group relative bg-gradient-to-br from-[#1C1C2E]/95 to-[#14141F]/95 backdrop-blur-xl rounded-3xl overflow-hidden transition-all duration-500 ${isExpanded ? 'ring-2 ring-[#FF6B35]/50 shadow-2xl shadow-[#FF6B35]/10' : 'border border-white/10 hover:border-white/20'
-                                            } ${isCompleted ? 'ring-2 ring-[#4ECDC4]/50' : ''}`}
+                                        className={`group relative bg-card/95 backdrop-blur-xl rounded-3xl overflow-hidden transition-all duration-500 ${isExpanded ? 'ring-2 ring-primary/50 shadow-2xl shadow-primary/10' : 'border border-border hover:border-border'
+                                            } ${isCompleted ? 'ring-2 ring-teal-500/50' : ''}`}
                                     >
                                         {isCompleted && (
                                             <div className="absolute top-4 right-4 z-20">
                                                 <motion.div
                                                     initial={{ scale: 0 }}
                                                     animate={{ scale: 1 }}
-                                                    className="w-10 h-10 rounded-full bg-[#4ECDC4] flex items-center justify-center shadow-lg shadow-[#4ECDC4]/30"
+                                                    className="w-10 h-10 rounded-full bg-[#4ECDC4] flex items-center justify-center shadow-lg shadow-teal-500/30"
                                                 >
-                                                    <CheckCircle2 className="w-5 h-5 text-white" />
+                                                    <CheckCircle2 className="w-5 h-5 text-foreground" />
                                                 </motion.div>
                                             </div>
                                         )}
@@ -287,11 +305,11 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                     alt={movie.title}
                                                     className={`w-full h-64 md:h-full object-cover transition-all duration-500 ${isCompleted ? 'opacity-60 grayscale-[30%]' : ''}`}
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#1C1C2E]" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#1C1C2E] via-transparent to-transparent md:hidden" />
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-card" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent md:hidden" />
 
                                                 <div className="absolute top-4 left-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center text-foreground font-bold text-lg shadow-lg">
                                                         {index + 1}
                                                     </div>
                                                 </div>
@@ -300,34 +318,34 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                             <div className="flex-1 p-6">
                                                 <div className="flex flex-wrap items-center gap-2 mb-3">
                                                     <span className={`px-3 py-1 text-xs font-bold rounded-full ${movie.priority === 'essential'
-                                                            ? 'bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white shadow-lg shadow-[#FF6B35]/25'
-                                                            : 'bg-[#4ECDC4]/20 text-[#4ECDC4] border border-[#4ECDC4]/30'
+                                                        ? 'bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground shadow-lg shadow-primary/25'
+                                                        : 'bg-[#4ECDC4]/20 text-teal-500 border border-[#4ECDC4]/30'
                                                         }`}>
                                                         {movie.priority === 'essential' ? 'ESENCIAL' : 'RECOMENDADA'}
                                                     </span>
                                                     {movie.watch_time && (
-                                                        <span className="flex items-center gap-1.5 px-3 py-1 text-xs text-[#A0A0AB] bg-white/5 rounded-full">
+                                                        <span className="flex items-center gap-1.5 px-3 py-1 text-xs text-muted-foreground bg-muted/50 rounded-full">
                                                             <Clock className="w-3.5 h-3.5" />
                                                             {movie.watch_time}
                                                         </span>
                                                     )}
                                                     <span className="flex items-center gap-1.5 px-3 py-1 text-xs bg-[#FFD166]/10 rounded-full">
-                                                        <Star className="w-3.5 h-3.5 fill-[#FFD166] text-[#FFD166]" />
-                                                        <span className="text-[#FFD166] font-semibold">8.0</span>
+                                                        <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
+                                                        <span className="text-yellow-500 font-semibold">8.0</span>
                                                     </span>
                                                 </div>
 
-                                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-[#FF6B35] transition-colors">
+                                                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
                                                     {movie.title}
                                                 </h3>
 
-                                                <p className={`text-[#A0A0AB] leading-relaxed mb-5 ${expandedNarratives.includes(index) ? '' : 'line-clamp-2'}`}>
+                                                <p className={`text-muted-foreground leading-relaxed mb-5 ${expandedNarratives.includes(index) ? '' : 'line-clamp-2'}`}>
                                                     {movie.summary.narrative}
                                                 </p>
                                                 {movie.summary.narrative.length > 150 && (
                                                     <button
                                                         onClick={() => toggleNarrative(index)}
-                                                        className="text-[#FF6B35] text-sm font-medium hover:underline mb-4 flex items-center gap-1"
+                                                        className="text-primary text-sm font-medium hover:underline mb-4 flex items-center gap-1"
                                                     >
                                                         {expandedNarratives.includes(index) ? 'Ver menos' : 'Ver más'}
                                                         <ChevronDown className={`w-4 h-4 transition-transform ${expandedNarratives.includes(index) ? 'rotate-180' : ''}`} />
@@ -340,8 +358,8 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                         whileTap={{ scale: 0.97 }}
                                                         onClick={() => setExpandedMovie(isExpanded ? null : index)}
                                                         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${isExpanded
-                                                                ? 'bg-white/10 text-white border border-white/20'
-                                                                : 'bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white shadow-lg shadow-[#FF6B35]/25 hover:shadow-[#FF6B35]/40'
+                                                            ? 'bg-muted text-foreground border border-border'
+                                                            : 'bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40'
                                                             }`}
                                                     >
                                                         <BookOpen className="w-4 h-4" />
@@ -353,8 +371,8 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                         whileTap={{ scale: 0.97 }}
                                                         onClick={() => toggleComplete(index)}
                                                         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all ${isCompleted
-                                                                ? 'bg-[#4ECDC4]/20 text-[#4ECDC4] border border-[#4ECDC4]/30'
-                                                                : 'bg-white/5 text-[#A0A0AB] border border-white/10 hover:border-white/30 hover:text-white'
+                                                            ? 'bg-[#4ECDC4]/20 text-teal-500 border border-[#4ECDC4]/30'
+                                                            : 'bg-muted/50 text-muted-foreground border border-border hover:border-white/30 hover:text-foreground'
                                                             }`}
                                                     >
                                                         <Eye className="w-4 h-4" />
@@ -379,14 +397,14 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                     transition={{ duration: 0.4, ease: "easeInOut" }}
                                                     className="overflow-hidden"
                                                 >
-                                                    <div className="border-t border-white/10 bg-gradient-to-b from-white/5 to-transparent">
+                                                    <div className="border-t border-border bg-gradient-to-b from-white/5 to-transparent">
                                                         <div className="p-6">
                                                             <div className="flex gap-2 mb-6">
                                                                 <button
                                                                     onClick={() => setActiveTab('facts')}
                                                                     className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all ${activeTab === 'facts'
-                                                                            ? 'bg-[#FF6B35] text-white shadow-lg shadow-[#FF6B35]/25'
-                                                                            : 'bg-white/5 text-[#A0A0AB] hover:text-white hover:bg-white/10'
+                                                                        ? 'bg-[#FF6B35] text-foreground shadow-lg shadow-primary/25'
+                                                                        : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
                                                                         }`}
                                                                 >
                                                                     <Target className="w-4 h-4" />
@@ -395,8 +413,8 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                                 <button
                                                                     onClick={() => setActiveTab('emotions')}
                                                                     className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all ${activeTab === 'emotions'
-                                                                            ? 'bg-[#FF6B35] text-white shadow-lg shadow-[#FF6B35]/25'
-                                                                            : 'bg-white/5 text-[#A0A0AB] hover:text-white hover:bg-white/10'
+                                                                        ? 'bg-[#FF6B35] text-foreground shadow-lg shadow-primary/25'
+                                                                        : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
                                                                         }`}
                                                                 >
                                                                     <Heart className="w-4 h-4" />
@@ -420,23 +438,23 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                                                 animate={{ opacity: 1, y: 0 }}
                                                                                 transition={{ delay: idx * 0.05 }}
                                                                                 className={`group/fact flex gap-4 p-4 rounded-2xl transition-all hover:scale-[1.01] cursor-default ${fact.importance === 'critical'
-                                                                                        ? 'bg-gradient-to-r from-[#FF6B35]/15 to-[#FF6B35]/5 border border-[#FF6B35]/30'
-                                                                                        : 'bg-white/5 border border-white/10 hover:border-white/20'
+                                                                                    ? 'bg-gradient-to-r from-[#FF6B35]/15 to-[#FF6B35]/5 border border-[#FF6B35]/30'
+                                                                                    : 'bg-muted/50 border border-border hover:border-border'
                                                                                     }`}
                                                                             >
                                                                                 <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm transition-all group-hover/fact:scale-110 ${fact.importance === 'critical'
-                                                                                        ? 'bg-gradient-to-br from-[#FF6B35] to-[#F7931E] text-white shadow-lg shadow-[#FF6B35]/25'
-                                                                                        : 'bg-[#4ECDC4]/20 text-[#4ECDC4]'
+                                                                                    ? 'bg-gradient-to-br from-[#FF6B35] to-[#F7931E] text-foreground shadow-lg shadow-primary/25'
+                                                                                    : 'bg-[#4ECDC4]/20 text-teal-500'
                                                                                     }`}>
                                                                                     {fact.importance === 'critical' ? <Zap className="w-5 h-5" /> : idx + 1}
                                                                                 </div>
                                                                                 <div className="flex-1">
                                                                                     {fact.importance === 'critical' && (
-                                                                                        <span className="text-xs font-semibold text-[#FF6B35] uppercase tracking-wider mb-1 block">
+                                                                                        <span className="text-xs font-semibold text-primary uppercase tracking-wider mb-1 block">
                                                                                             Crítico
                                                                                         </span>
                                                                                     )}
-                                                                                    <p className="text-[#E0E0E5] leading-relaxed">
+                                                                                    <p className="text-foreground leading-relaxed">
                                                                                         {fact.text}
                                                                                     </p>
                                                                                 </div>
@@ -462,10 +480,10 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                                                     initial={{ opacity: 0, scale: 0.95 }}
                                                                                     animate={{ opacity: 1, scale: 1 }}
                                                                                     transition={{ delay: idx * 0.05 }}
-                                                                                    className="group/beat flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-[#FFD166]/30 hover:bg-[#FFD166]/5 transition-all cursor-default"
+                                                                                    className="group/beat flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-muted/50 to-transparent border border-border hover:border-yellow-500/30 hover:bg-yellow-500/5 transition-all cursor-default"
                                                                                 >
                                                                                     <span className="text-2xl group-hover/beat:scale-125 transition-transform">{emoji}</span>
-                                                                                    <p className="text-[#A0A0AB] text-sm leading-relaxed group-hover/beat:text-[#E0E0E5] transition-colors">
+                                                                                    <p className="text-muted-foreground text-sm leading-relaxed group-hover/beat:text-foreground transition-colors">
                                                                                         {text}
                                                                                     </p>
                                                                                 </motion.div>
@@ -476,7 +494,7 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                                             </AnimatePresence>
 
                                                             {movie.audio && movie.audio.status === 'ready' && (
-                                                                <div className="mt-6 pt-6 border-t border-white/10">
+                                                                <div className="mt-6 pt-6 border-t border-border">
                                                                     <AudioPlayer audio={movie.audio} movieTitle={movie.title} />
                                                                 </div>
                                                             )}
@@ -497,12 +515,12 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                 transition={{ delay: 0.4 }}
                                 className="sticky top-24 space-y-6"
                             >
-                                <div className="bg-gradient-to-br from-[#1C1C2E]/95 to-[#14141F]/95 backdrop-blur-xl border border-white/10 rounded-3xl p-6 overflow-hidden relative">
+                                <div className="bg-card/95 backdrop-blur-xl border border-border rounded-3xl p-6 overflow-hidden relative">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD166]/10 rounded-full blur-3xl" />
 
-                                    <h3 className="text-xl font-bold text-white mb-5 flex items-center gap-3 relative">
+                                    <h3 className="text-xl font-bold text-foreground mb-5 flex items-center gap-3 relative">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FFD166] to-[#FF6B35] flex items-center justify-center">
-                                            <Lightbulb className="w-5 h-5 text-white" />
+                                            <Lightbulb className="w-5 h-5 text-foreground" />
                                         </div>
                                         Tips de Preparación
                                     </h3>
@@ -510,48 +528,48 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                     <div className="space-y-4 relative">
                                         <motion.div
                                             whileHover={{ x: 4 }}
-                                            className="flex gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-[#FF6B35]/30 transition-all cursor-default"
+                                            className="flex gap-3 p-4 rounded-2xl bg-muted/50 border border-white/5 hover:border-[#FF6B35]/30 transition-all cursor-default"
                                         >
                                             <div className="w-10 h-10 rounded-xl bg-[#FF6B35]/20 flex items-center justify-center flex-shrink-0">
-                                                <Volume2 className="w-5 h-5 text-[#FF6B35]" />
+                                                <Volume2 className="w-5 h-5 text-primary" />
                                             </div>
-                                            <p className="text-[#A0A0AB] text-sm leading-relaxed">
+                                            <p className="text-muted-foreground text-sm leading-relaxed">
                                                 Escucha los resúmenes de audio mientras realizas otras actividades.
                                             </p>
                                         </motion.div>
 
                                         <motion.div
                                             whileHover={{ x: 4 }}
-                                            className="flex gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-[#4ECDC4]/30 transition-all cursor-default"
+                                            className="flex gap-3 p-4 rounded-2xl bg-muted/50 border border-white/5 hover:border-[#4ECDC4]/30 transition-all cursor-default"
                                         >
                                             <div className="w-10 h-10 rounded-xl bg-[#4ECDC4]/20 flex items-center justify-center flex-shrink-0">
-                                                <BookOpen className="w-5 h-5 text-[#4ECDC4]" />
+                                                <BookOpen className="w-5 h-5 text-teal-500" />
                                             </div>
-                                            <p className="text-[#A0A0AB] text-sm leading-relaxed">
+                                            <p className="text-muted-foreground text-sm leading-relaxed">
                                                 Guarda los datos clave para repasarlos antes de ir al cine.
                                             </p>
                                         </motion.div>
 
                                         <motion.div
                                             whileHover={{ x: 4 }}
-                                            className="flex gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-[#FFD166]/30 transition-all cursor-default"
+                                            className="flex gap-3 p-4 rounded-2xl bg-muted/50 border border-white/5 hover:border-[#FFD166]/30 transition-all cursor-default"
                                         >
                                             <div className="w-10 h-10 rounded-xl bg-[#FFD166]/20 flex items-center justify-center flex-shrink-0">
-                                                <CheckCircle2 className="w-5 h-5 text-[#FFD166]" />
+                                                <CheckCircle2 className="w-5 h-5 text-yellow-500" />
                                             </div>
-                                            <p className="text-[#A0A0AB] text-sm leading-relaxed">
+                                            <p className="text-muted-foreground text-sm leading-relaxed">
                                                 Marca las películas completadas para llevar tu progreso.
                                             </p>
                                         </motion.div>
 
                                         <motion.div
                                             whileHover={{ x: 4 }}
-                                            className="flex gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-[#FF6B35]/30 transition-all cursor-default"
+                                            className="flex gap-3 p-4 rounded-2xl bg-muted/50 border border-white/5 hover:border-[#FF6B35]/30 transition-all cursor-default"
                                         >
                                             <div className="w-10 h-10 rounded-xl bg-[#FF6B35]/20 flex items-center justify-center flex-shrink-0">
-                                                <Zap className="w-5 h-5 text-[#FF6B35]" />
+                                                <Zap className="w-5 h-5 text-primary" />
                                             </div>
-                                            <p className="text-[#A0A0AB] text-sm leading-relaxed">
+                                            <p className="text-muted-foreground text-sm leading-relaxed">
                                                 Los datos "críticos" son esenciales para entender la nueva película.
                                             </p>
                                         </motion.div>
@@ -561,7 +579,7 @@ export default function LoreAnalysis({ analysis, collectionName }: LoreAnalysisP
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white font-semibold shadow-lg shadow-[#FF6B35]/25 hover:shadow-[#FF6B35]/40 transition-all"
+                                    className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
                                 >
                                     <Share2 className="w-5 h-5" />
                                     Compartir Preparación

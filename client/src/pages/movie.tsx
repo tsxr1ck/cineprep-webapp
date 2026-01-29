@@ -13,12 +13,14 @@ import {
   Eye,
   CheckCircle2,
   AlertCircle,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TMDBService } from "@/services/TMDB-service";
 import { useLoreGenerator } from "@/hooks/useLoreGenerator";
 import { useHistory } from "@/hooks/useHistory";
+import { useFavorites } from "@/hooks/useFavorites";
 import { LoadingStates } from "@/components/app/loading-states";
 import LoreAnalysis from "@/components/app/lore-analysis";
 import MovieGrid from "@/components/app/movie-grid";
@@ -47,6 +49,17 @@ export default function MoviePage() {
   } = useLoreGenerator(movie?.id || 0);
 
   const { hasAnalysis, getAnalysis, isLoading: isLoadingHistory } = useHistory();
+
+  const { toggleFavorite, isFavorite: checkIsFavorite, favorites, fetchFavorites } = useFavorites();
+
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+
+  // Fetch favorites on mount to ensure we have the latest state
+  useEffect(() => {
+    if (favorites.length === 0) {
+      fetchFavorites(true);
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchMovie() {
@@ -153,6 +166,13 @@ export default function MoviePage() {
     navigate(`/movie/${movie.id}`);
   };
 
+  const handleToggleFavorite = async () => {
+    if (!userAnalysis?.id) return;
+    setIsTogglingFavorite(true);
+    await toggleFavorite(userAnalysis.id);
+    setIsTogglingFavorite(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20">
@@ -162,9 +182,9 @@ export default function MoviePage() {
           className="flex flex-col items-center gap-4"
         >
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center">
-            <Loader2 className="w-8 h-8 text-white animate-spin" />
+            <Loader2 className="w-8 h-8 text-foreground animate-spin" />
           </div>
-          <p className="text-[#6B6B78]">Cargando pelicula...</p>
+          <p className="text-muted-foreground">Cargando pelicula...</p>
         </motion.div>
       </div>
     );
@@ -174,8 +194,8 @@ export default function MoviePage() {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20">
         <div className="text-center">
-          <p className="text-[#6B6B78] mb-4">Pelicula no encontrada</p>
-          <Link to="/" className="text-[#FF6B35] hover:underline">
+          <p className="text-muted-foreground mb-4">Pelicula no encontrada</p>
+          <Link to="/" className="text-primary hover:underline">
             Volver al inicio
           </Link>
         </div>
@@ -197,6 +217,9 @@ export default function MoviePage() {
   // Check if user has already analyzed this movie
   const movieHasLore = !isLoadingHistory && hasAnalysis(movie.id);
   const userAnalysis = movieHasLore ? getAnalysis(movie.id) : null;
+
+  // Check if the current analysis is in favorites
+  const currentAnalysisIsFavorite = userAnalysis?.id ? checkIsFavorite(userAnalysis.id) : false;
 
   // Format the date when lore was generated
   const loreGeneratedDate = userAnalysis
@@ -229,11 +252,11 @@ export default function MoviePage() {
                     <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-red-500 font-semibold mb-1">Error al cargar lore</p>
-                      <p className="text-red-400 text-sm">{loadError}</p>
+                      <p className="text-red-500 text-sm">{loadError}</p>
                     </div>
                     <button
                       onClick={() => setLoadError(null)}
-                      className="text-red-400 hover:text-red-300"
+                      className="text-red-500 hover:text-red-400"
                     >
                       ×
                     </button>
@@ -254,8 +277,8 @@ export default function MoviePage() {
                 />
               )}
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/80 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F] via-[#0A0A0F]/70 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
               <div className="absolute inset-0 bg-black/30" />
 
               <div className="absolute top-24 left-4">
@@ -263,7 +286,7 @@ export default function MoviePage() {
                   whileHover={{ scale: 1.05, x: -4 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate(-1)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 text-white hover:bg-white/20 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-muted backdrop-blur-sm border border-border text-foreground hover:bg-white/20 transition-all"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Volver</span>
@@ -281,7 +304,7 @@ export default function MoviePage() {
                     <img
                       src={posterUrl}
                       alt={movie.title}
-                      className="w-72 rounded-2xl shadow-2xl shadow-black/50 border border-white/10"
+                      className="w-72 rounded-2xl shadow-2xl shadow border border-border"
                     />
                   )}
                 </motion.div>
@@ -302,7 +325,7 @@ export default function MoviePage() {
                       >
                         <Badge
                           variant="outline"
-                          className="border-white/20 text-gray-200 bg-white/10 backdrop-blur-sm px-3 py-1"
+                          className="border-border text-foreground bg-muted backdrop-blur-sm px-3 py-1"
                         >
                           {genre.name}
                         </Badge>
@@ -314,7 +337,7 @@ export default function MoviePage() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.6 }}
                       >
-                        <Badge className="bg-[#4ECDC4] text-white px-3 py-1">
+                        <Badge className="bg-[#4ECDC4] text-foreground px-3 py-1">
                           Parte de saga
                         </Badge>
                       </motion.div>
@@ -325,31 +348,31 @@ export default function MoviePage() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.7 }}
                       >
-                        <Badge className="bg-[#FF6B35] text-white px-3 py-1">
+                        <Badge className="bg-[#FF6B35] text-foreground px-3 py-1">
                           Lore generado
                         </Badge>
                       </motion.div>
                     )}
                   </div>
 
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-[1.1] drop-shadow-lg">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight leading-[1.1] drop-shadow-lg">
                     {movie.title}
                   </h1>
 
-                  <div className="flex flex-wrap items-center gap-6 text-gray-200 mb-8">
+                  <div className="flex flex-wrap items-center gap-6 text-foreground mb-8">
                     <motion.span
                       whileHover={{ scale: 1.05 }}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-sm"
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted backdrop-blur-sm"
                     >
-                      <Calendar className="w-5 h-5 text-[#FF6B35]" />
+                      <Calendar className="w-5 h-5 text-primary" />
                       {releaseDate}
                     </motion.span>
                     {movie.runtime && (
                       <motion.span
                         whileHover={{ scale: 1.05 }}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-sm"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted backdrop-blur-sm"
                       >
-                        <Clock className="w-5 h-5 text-[#4ECDC4]" />
+                        <Clock className="w-5 h-5 text-teal-500" />
                         {movie.runtime} min
                       </motion.span>
                     )}
@@ -357,14 +380,14 @@ export default function MoviePage() {
                       whileHover={{ scale: 1.05 }}
                       className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#FFD166]/20 backdrop-blur-sm"
                     >
-                      <Star className="w-5 h-5 fill-[#FFD166] text-[#FFD166]" />
-                      <span className="font-semibold text-[#FFD166]">
+                      <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                      <span className="font-semibold text-yellow-500">
                         {movie.vote_average?.toFixed(1)}
                       </span>
                     </motion.span>
                   </div>
 
-                  <p className="text-lg text-gray-300 mb-10 max-w-2xl leading-relaxed">
+                  <p className="text-lg text-muted-foreground mb-10 max-w-2xl leading-relaxed">
                     {movie.overview}
                   </p>
 
@@ -372,27 +395,53 @@ export default function MoviePage() {
                     {collectionInfo?.needs_lore ? (
                       movieHasLore ? (
                         <div className="flex flex-col gap-3">
-                          <motion.div
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <Button
-                              size="lg"
-                              className="bg-gradient-to-r from-[#4ECDC4] to-[#44A5E5] text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-[#4ECDC4]/25 hover:shadow-[#4ECDC4]/40 transition-all rounded-2xl"
-                              onClick={handleShowLore}
+                          <div className="flex items-center gap-3">
+                            <motion.div
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
                             >
-                              <Eye className="w-5 h-5 mr-2" />
-                              Mostrar Lore
-                              <ChevronRight className="w-5 h-5 ml-1" />
-                            </Button>
-                          </motion.div>
+                              <Button
+                                size="lg"
+                                className="bg-gradient-to-r from-[#4ECDC4] to-[#44A5E5] text-foreground font-semibold px-8 py-6 text-lg shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all rounded-2xl"
+                                onClick={handleShowLore}
+                              >
+                                <Eye className="w-5 h-5 mr-2" />
+                                Mostrar Lore
+                                <ChevronRight className="w-5 h-5 ml-1" />
+                              </Button>
+                            </motion.div>
+
+                            {/* Favorite Button */}
+                            {userAnalysis && (
+                              <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                <Button
+                                  size="lg"
+                                  variant="outline"
+                                  className={`px-4 py-6 text-lg rounded-2xl border-2 transition-all ${currentAnalysisIsFavorite
+                                    ? 'border-[#FF6B35] bg-[#FF6B35]/10 text-[#FF6B35]'
+                                    : 'border-border hover:border-[#FF6B35]/50 text-muted-foreground hover:text-[#FF6B35]'
+                                    }`}
+                                  onClick={handleToggleFavorite}
+                                  disabled={isTogglingFavorite}
+                                >
+                                  <Heart
+                                    className={`w-5 h-5 ${currentAnalysisIsFavorite ? 'fill-[#FF6B35]' : ''}
+                                    }`}
+                                  />
+                                </Button>
+                              </motion.div>
+                            )}
+                          </div>
                           {loreGeneratedDate && (
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
-                              className="flex items-center gap-2 text-sm text-gray-400"
+                              className="flex items-center gap-2 text-sm text-muted-foreground"
                             >
-                              <CheckCircle2 className="w-4 h-4 text-[#4ECDC4]" />
+                              <CheckCircle2 className="w-4 h-4 text-teal-500" />
                               <span>Generado el {loreGeneratedDate}</span>
                             </motion.div>
                           )}
@@ -404,7 +453,7 @@ export default function MoviePage() {
                         >
                           <Button
                             size="lg"
-                            className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white font-semibold px-8 py-6 text-lg shadow-lg shadow-[#FF6B35]/25 hover:shadow-[#FF6B35]/40 transition-all rounded-2xl"
+                            className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground font-semibold px-8 py-6 text-lg shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all rounded-2xl"
                             onClick={handleAnalyzeLore}
                             disabled={isGeneratingLore}
                           >
@@ -424,9 +473,9 @@ export default function MoviePage() {
                         </motion.div>
                       )
                     ) : (
-                      <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                        <Users className="w-5 h-5 text-[#4ECDC4]" />
-                        <span className="text-gray-300">
+                      <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-muted/50 border border-border backdrop-blur-sm">
+                        <Users className="w-5 h-5 text-teal-500" />
+                        <span className="text-muted-foreground">
                           Esta pelicula no requiere conocimiento previo
                         </span>
                       </div>
@@ -438,7 +487,7 @@ export default function MoviePage() {
 
             {movie.credits?.cast && movie.credits.cast.length > 0 && (
               <div className="container mx-auto px-4 py-12">
-                <h2 className="text-2xl font-bold text-white mb-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">
                   Reparto principal
                 </h2>
                 <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
@@ -450,7 +499,7 @@ export default function MoviePage() {
                       transition={{ delay: index * 0.05 }}
                       className="flex-shrink-0 w-32 text-center"
                     >
-                      <div className="w-24 h-24 mx-auto rounded-2xl overflow-hidden bg-white/5 mb-3">
+                      <div className="w-24 h-24 mx-auto rounded-2xl overflow-hidden bg-muted/50 mb-3">
                         {actor.profile_path ? (
                           <img
                             src={
@@ -463,15 +512,15 @@ export default function MoviePage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-[#6B6B78]">
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <Users className="w-8 h-8" />
                           </div>
                         )}
                       </div>
-                      <p className="text-white text-sm font-medium truncate">
+                      <p className="text-foreground text-sm font-medium truncate">
                         {actor.name}
                       </p>
-                      <p className="text-[#6B6B78] text-xs truncate">
+                      <p className="text-muted-foreground text-xs truncate">
                         {actor.character}
                       </p>
                     </motion.div>
@@ -508,15 +557,15 @@ export default function MoviePage() {
                   setShowLoreView(false);
                   clearAnalysis();
                 }}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[#A0A0AB] hover:text-white hover:bg-white/10 transition-all mb-8"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-all mb-8"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Volver a {movie.title}
               </motion.button>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
                 Preparando:{" "}
-                <span className="text-[#FF6B35]">{movie.title}</span>
+                <span className="text-primary">{movie.title}</span>
               </h1>
             </div>
 
@@ -528,6 +577,9 @@ export default function MoviePage() {
               <LoreAnalysis
                 analysis={loreAnalysis}
                 collectionName={collectionInfo?.collection_name}
+                analysisId={userAnalysis?.id}
+                isFavorite={userAnalysis?.is_favorite}
+                onToggleFavorite={handleToggleFavorite}
               />
             ) : null}
           </motion.div>

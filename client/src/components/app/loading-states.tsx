@@ -20,14 +20,14 @@ export function LoadingStates({ stage, stages }: LoadingStatesProps) {
     };
 
     return (
-        <Card className="bg-cinema-elevated border-white/10 p-8 shadow-cinema">
+        <Card className="bg-cinema-elevated border-border p-8 shadow-cinema">
             <div className="space-y-6">
                 {/* Header */}
                 <div className="mb-8">
-                    <h3 className="text-2xl font-bold text-white mb-2">
+                    <h3 className="text-2xl font-bold text-foreground mb-2">
                         Preparando tu resumen
                     </h3>
-                    <p className="text-gray-300">
+                    <p className="text-muted-foreground">
                         Esto tomará unos segundos mientras analizamos la saga...
                     </p>
                 </div>
@@ -57,7 +57,7 @@ export function LoadingStates({ stage, stages }: LoadingStatesProps) {
                                             ? 'bg-emerald-500/20 shadow-lg shadow-emerald-500/20 scale-100 border border-emerald-500/30'
                                             : isActive
                                                 ? 'bg-orange-500/20 shadow-lg shadow-orange-500/20 scale-110 border border-orange-500/40' // Orange for active
-                                                : 'bg-white/5 border border-white/10 scale-95'
+                                                : 'bg-muted/50 border border-border scale-95'
                                         }
                   `}
                                 >
@@ -95,7 +95,7 @@ export function LoadingStates({ stage, stages }: LoadingStatesProps) {
                                         className={`
                       text-base transition-all duration-300 font-medium
                       ${isActive
-                                                ? 'text-white'
+                                                ? 'text-foreground'
                                                 : isComplete
                                                     ? 'text-emerald-400'
                                                     : 'text-gray-500'
@@ -163,7 +163,7 @@ export function LoadingStates({ stage, stages }: LoadingStatesProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="pt-6 mt-6 border-t border-white/10 flex items-center justify-center gap-2 text-gray-400 text-sm"
+                    className="pt-6 mt-6 border-t border-border flex items-center justify-center gap-2 text-muted-foreground text-sm"
                 >
                     <Sparkles className="w-4 h-4" />
                     <span>Powered by Qwen AI</span>

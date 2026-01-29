@@ -52,7 +52,7 @@ export default function ComingSoon() {
     const backdropUrl = currentMovie ? TMDBService.getImageUrl(currentMovie.backdrop_path, 'original') : null;
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-[#0A0A0F]">
+        <div className="relative min-h-screen overflow-hidden bg-background">
             {/* Animated Background */}
             <AnimatePresence mode="wait">
                 {backdropUrl && (
@@ -74,8 +74,8 @@ export default function ComingSoon() {
             </AnimatePresence>
 
             {/* Gradient Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0F]/60 via-[#0A0A0F]/80 to-[#0A0A0F]" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0F]/90 via-transparent to-[#0A0A0F]/90" />
+            <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-transparent to-background/90" />
 
             {/* Animated Particles */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -115,11 +115,11 @@ export default function ComingSoon() {
                         <motion.div
                             animate={{ rotate: [0, 10, -10, 0] }}
                             transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center shadow-2xl shadow-[#FF6B35]/40"
+                            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center shadow-2xl shadow-primary/40"
                         >
-                            <Film className="w-8 h-8 text-white" />
+                            <Film className="w-8 h-8 text-foreground" />
                         </motion.div>
-                        <h1 className="text-4xl md:text-5xl font-bold text-white">CinePrep</h1>
+                        <h1 className="text-4xl md:text-5xl font-bold text-foreground">CinePrep</h1>
                     </div>
                 </motion.div>
 
@@ -133,11 +133,11 @@ export default function ComingSoon() {
                     <motion.div
                         animate={{ y: [0, -10, 0] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="inline-flex items-center gap-2 mb-6 px-6 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20"
+                        className="inline-flex items-center gap-2 mb-6 px-6 py-3 rounded-full bg-muted backdrop-blur-xl border border-border"
                     >
-                        <Sparkles className="w-5 h-5 text-[#FFD166]" />
-                        <span className="text-white font-medium">Algo increíble está por llegar</span>
-                        <Sparkles className="w-5 h-5 text-[#FFD166]" />
+                        <Sparkles className="w-5 h-5 text-yellow-500" />
+                        <span className="text-foreground font-medium">Algo increíble está por llegar</span>
+                        <Sparkles className="w-5 h-5 text-yellow-500" />
                     </motion.div>
 
                     <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-6">
@@ -150,11 +150,11 @@ export default function ComingSoon() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.8 }}
-                        className="text-xl md:text-2xl text-white/80 leading-relaxed max-w-2xl mx-auto"
+                        className="text-xl md:text-2xl text-foreground/80 leading-relaxed max-w-2xl mx-auto"
                     >
                         La plataforma definitiva para nunca perderte el lore de tus películas favoritas.
                         <br />
-                        <span className="text-[#4ECDC4] font-semibold">Prepárate para el cine como nunca antes.</span>
+                        <span className="text-teal-500 font-semibold">Prepárate para el cine como nunca antes.</span>
                     </motion.p>
                 </motion.div>
 
@@ -176,11 +176,11 @@ export default function ComingSoon() {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 1.2 + i * 0.1 }}
                             whileHover={{ scale: 1.1, y: -5 }}
-                            className="group px-6 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all"
+                            className="group px-6 py-3 rounded-2xl bg-muted/50 backdrop-blur-xl border border-border hover:border-white/30 transition-all"
                         >
                             <div className="flex items-center gap-3">
                                 <item.icon className={`w-5 h-5 text-[#${item.color}] group-hover:scale-110 transition-transform`} />
-                                <span className="text-white/90 font-medium">{item.text}</span>
+                                <span className="text-foreground/90 font-medium">{item.text}</span>
                             </div>
                         </motion.div>
                     ))}
@@ -208,13 +208,13 @@ export default function ComingSoon() {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="tu@email.com"
                                         required
-                                        className="h-14 pl-5 pr-5 bg-white/10 backdrop-blur-xl border-white/20 text-white placeholder:text-white/50 focus:border-[#FF6B35]/50 focus:ring-[#FF6B35]/20 rounded-2xl text-lg"
+                                        className="h-14 pl-5 pr-5 bg-muted backdrop-blur-xl border-border text-foreground placeholder:text-foreground/50 focus:border-[#FF6B35]/50 focus:ring-[#FF6B35]/20 rounded-2xl text-lg"
                                     />
                                 </div>
                                 <Button
                                     type="submit"
                                     size="lg"
-                                    className="h-14 px-8 bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white font-semibold text-base shadow-2xl shadow-[#FF6B35]/40 hover:shadow-[#FF6B35]/60 transition-all rounded-2xl"
+                                    className="h-14 px-8 bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-foreground font-semibold text-base shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all rounded-2xl"
                                 >
                                     <Bell className="w-5 h-5 mr-2" />
                                     Notificarme
@@ -233,15 +233,15 @@ export default function ComingSoon() {
                                     animate={{ scale: 1 }}
                                     transition={{ type: "spring", stiffness: 200 }}
                                 >
-                                    <Sparkles className="w-6 h-6 text-[#4ECDC4]" />
+                                    <Sparkles className="w-6 h-6 text-teal-500" />
                                 </motion.div>
-                                <span className="text-white font-semibold text-lg">
+                                <span className="text-foreground font-semibold text-lg">
                                     ¡Listo! Te avisaremos cuando lancemos 🎬
                                 </span>
                             </motion.div>
                         )}
                     </AnimatePresence>
-                    <p className="text-center text-white/50 text-sm mt-4">
+                    <p className="text-center text-foreground/50 text-sm mt-4">
                         Únete a la lista de espera y sé de los primeros en probarlo
                     </p>
                 </motion.div>
@@ -261,12 +261,12 @@ export default function ComingSoon() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.5 }}
-                                className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10"
+                                className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-muted/50 backdrop-blur-xl border border-border"
                             >
-                                <Calendar className="w-4 h-4 text-[#FF6B35]" />
-                                <span className="text-white/80 text-sm">
+                                <Calendar className="w-4 h-4 text-primary" />
+                                <span className="text-foreground/80 text-sm">
                                     Ahora destacando:{' '}
-                                    <span className="font-bold text-white">{currentMovie.title}</span>
+                                    <span className="font-bold text-foreground">{currentMovie.title}</span>
                                 </span>
                             </motion.div>
                         </AnimatePresence>
@@ -298,7 +298,7 @@ export default function ComingSoon() {
             </div>
 
             {/* Bottom Gradient */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0A0A0F] to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
         </div>
     );
 }
